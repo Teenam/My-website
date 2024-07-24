@@ -21,17 +21,27 @@ main {
     padding: 2rem;
 }
 
-.gallery {
+.folders {
+    display: flex;
+    justify-content: space-around;
     margin-bottom: 2rem;
 }
 
-.gallery h2 {
-    border-bottom: 2px solid #333;
-    padding-bottom: 0.5rem;
+.folder {
+    background-color: #ddd;
+    padding: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.image-container {
-    display: flex;
+.folder:hover,
+.folder.active {
+    background-color: #bbb;
+}
+
+#images-container {
+    display: none;
     flex-wrap: wrap;
     gap: 1rem;
     margin-top: 1rem;
@@ -47,4 +57,32 @@ main {
 
 .image-container img:hover {
     transform: scale(1.05);
+}
+
+#to-top {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: none;
+}
+
+#to-top:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 0 0 5px 5px;
 }

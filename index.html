@@ -11,23 +11,16 @@
         <h1>My Image Gallery</h1>
     </header>
     <main>
-        <section class="gallery" id="year-2021">
-            <h2>2021</h2>
-            <div class="image-container">
-                <img src="2021/image1.jpg" alt="Image 1">
-                <img src="2021/image2.jpg" alt="Image 2">
-                <!-- Add more images as needed -->
-            </div>
-        </section>
-        <section class="gallery" id="year-2022">
-            <h2>2022</h2>
-            <div class="image-container">
-                <img src="2022/image1.jpg" alt="Image 1">
-                <img src="2022/image2.jpg" alt="Image 2">
-                <!-- Add more images as needed -->
-            </div>
-        </section>
-        <!-- Add more sections for other years as needed -->
+        <div class="folders">
+            <div class="folder" data-year="2019">2019</div>
+            <div class="folder" data-year="2020">2020</div>
+            <div class="folder" data-year="2021">2021</div>
+            <div class="folder" data-year="2022">2022</div>
+            <div class="folder" data-year="2023">2023</div>
+        </div>
+        <div id="images-container"></div>
+        <button id="to-top">Top</button>
     </main>
+    <script src="js/script.js"></script>
 </body>
 </html>
