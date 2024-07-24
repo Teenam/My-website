@@ -41,7 +41,7 @@ main {
 }
 
 #images-container {
-    display: none;
+    display: flex;
     flex-wrap: wrap;
     gap: 1rem;
     margin-top: 1rem;
