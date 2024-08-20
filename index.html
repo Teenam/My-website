@@ -5,21 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Gallery</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
+    
     <header>
-        <h1>My Image Gallery</h1>
+        <div class="banner">
+            <h1>My Image Gallery</h1>
+        </div>
     </header>
     <main>
         <div class="folders">
-            <div class="folder" data-year="2019">2019</div>
-            <div class="folder" data-year="2020">2020</div>
-            <div class="folder" data-year="2021">2021</div>
-            <div class="folder" data-year="2022">2022</div>
-            <div class="folder" data-year="2023">2023</div>
+            <div class="folder" data-year="2020"><i class="fas fa-folder"></i> 2020</div>
+            <div class="folder" data-year="2021"><i class="fas fa-folder"></i> 2021</div>
+            <div class="folder" data-year="2022"><i class="fas fa-folder"></i> 2022</div>
+            <div class="folder" data-year="2023"><i class="fas fa-folder"></i> 2023</div>
+            <div class="folder" data-year="2024"><i class="fas fa-folder"></i> 2024</div>
         </div>
         <div id="images-container"></div>
-        <button id="to-top">Top</button>
+        <button id="to-top"><i class="fas fa-arrow-up"></i></button>
     </main>
     <script src="js/script.js"></script>
 </body>
