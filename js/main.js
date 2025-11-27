@@ -26,13 +26,35 @@ function renderFolders(folders) {
         const card = document.createElement('div');
         card.className = 'folder-card';
 
-        // Find a preview image (first image file)
-        const previewFile = folder.files.find(f => f.match(/\.(jpg|jpeg|png|gif|webp)$/i));
-        // We only use the icon for the main view now, but keep preview logic if we want to add it back subtly
+        // Get up to 3 preview items
+        const previewFiles = folder.files.slice(0, 3);
+        let previewHTML = '';
+
+        previewFiles.forEach(file => {
+            const ext = file.split('.').pop().toLowerCase();
+            const filePath = `content/${folder.name}/${file}`;
+
+            if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+                previewHTML += `<div class="preview-item" style="background-image: url('${filePath}'); background-size: cover; background-position: center;"></div>`;
+            } else {
+                // For non-image files, show a generic glass block or icon
+                previewHTML += `<div class="preview-item" style="display: flex; align-items: center; justify-content: center;"><i class="fas fa-file" style="color: rgba(255,255,255,0.5);"></i></div>`;
+            }
+        });
+
+        // Fill remaining slots if less than 3 files
+        for (let i = previewFiles.length; i < 3; i++) {
+            previewHTML += `<div class="preview-item"></div>`;
+        }
 
         card.innerHTML = `
-            <div class="folder-icon"><i class="fas fa-folder-open"></i></div>
-            <div class="folder-name">${folder.name.replace(/_/g, ' ')}</div>
+            <div class="folder-back glass-panel"></div>
+            <div class="folder-preview-items">
+                ${previewHTML}
+            </div>
+            <div class="folder-front glass-panel">
+                <div class="folder-name">${folder.name.replace(/_/g, ' ')}</div>
+            </div>
         `;
 
         card.addEventListener('click', () => openFolder(folder));
@@ -130,50 +152,54 @@ function initThreeJS() {
     container.appendChild(renderer.domElement);
 
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); // Slightly brighter
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0xffffff, 1.2);
+    const pointLight = new THREE.PointLight(0xffffff, 1.5);
     pointLight.position.set(20, 20, 20);
     scene.add(pointLight);
 
-    const pointLight2 = new THREE.PointLight(0xa8c0ff, 0.8);
+    const pointLight2 = new THREE.PointLight(0xa8c0ff, 1.0);
     pointLight2.position.set(-20, -10, -10);
     scene.add(pointLight2);
 
     // Floating Objects (Smooth Pearls)
-    const geometry = new THREE.SphereGeometry(1.5, 64, 64); // High poly for smoothness
+    // Increased segments for smoothness
+    const geometry = new THREE.SphereGeometry(1.5, 128, 128);
     const material = new THREE.MeshPhysicalMaterial({
         color: 0xffffff,
         metalness: 0.1,
-        roughness: 0.2,
-        transmission: 0.2, // Slight translucency
-        thickness: 1.0,
+        roughness: 0.05, // Very smooth
+        transmission: 0.6, // More translucent
+        thickness: 2.0,
         clearcoat: 1.0,
-        clearcoatRoughness: 0.1,
+        clearcoatRoughness: 0.0,
         reflectivity: 1.0,
         ior: 1.5,
+        iridescence: 1.0, // Add iridescence if supported (newer Three.js) or fallback
+        iridescenceIOR: 1.3,
+        iridescenceThicknessRange: [100, 400]
     });
 
     const objects = [];
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 15; i++) {
         const mesh = new THREE.Mesh(geometry, material);
 
         // Random positions spread out
-        mesh.position.x = (Math.random() - 0.5) * 30;
-        mesh.position.y = (Math.random() - 0.5) * 30;
-        mesh.position.z = (Math.random() - 0.5) * 15 - 10;
+        mesh.position.x = (Math.random() - 0.5) * 35;
+        mesh.position.y = (Math.random() - 0.5) * 35;
+        mesh.position.z = (Math.random() - 0.5) * 20 - 10;
 
-        const scale = Math.random() * 0.8 + 0.4;
+        const scale = Math.random() * 1.0 + 0.5; // Slightly larger variation
         mesh.scale.set(scale, scale, scale);
 
         scene.add(mesh);
         objects.push({
             mesh: mesh,
             initialPos: mesh.position.clone(),
-            speedX: (Math.random() - 0.5) * 0.005,
-            speedY: (Math.random() - 0.5) * 0.005,
-            rotSpeed: (Math.random() - 0.5) * 0.002,
+            speedX: (Math.random() - 0.5) * 0.003,
+            speedY: (Math.random() - 0.5) * 0.003,
+            rotSpeed: (Math.random() - 0.5) * 0.001,
             phase: Math.random() * Math.PI * 2
         });
     }

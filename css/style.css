@@ -85,101 +85,186 @@ main {
     width: 100%;
 }
 
+/* Folders Grid - Invisible Grid Alignment */
 .folders-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 4rem;
     padding: 2rem;
+    perspective: 1000px;
+    /* Essential for 3D */
 }
 
-/* Minimal Folder Styles */
+/* Liquid Glass Folder Container */
 .folder-card {
-    background: transparent;
-    border: none;
-    padding: 1rem;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    width: 220px;
+    height: 180px;
+    margin: 0 auto;
     position: relative;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    /* No background on the container itself to avoid the square look */
+}
+
+/* Common Glass Style */
+.glass-panel {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Folder Back Plate */
+.folder-back {
+    z-index: 1;
+    transform: translateZ(-10px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Folder Front Plate (The Cover) */
+.folder-front {
+    z-index: 10;
+    transform-origin: bottom;
+    transform: rotateX(0deg);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
-.folder-card:hover {
-    transform: translateY(-10px);
+/* Folder Tab (Visual detail) */
+.folder-front::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 0;
+    width: 40%;
+    height: 10px;
+    background: inherit;
+    border-radius: 12px 12px 0 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
 }
 
-.folder-icon {
-    font-size: 6rem;
-    /* Bigger icons */
-    margin-bottom: 1.5rem;
-    color: rgba(255, 255, 255, 0.9);
-    transition: all 0.5s ease;
-    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
-}
-
-.folder-card:hover .folder-icon {
-    transform: scale(1.1);
-    color: #fff;
-    filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.4));
-}
-
+/* Folder Name on Front */
 .folder-name {
     font-family: var(--font-body);
-    font-size: 1rem;
-    font-weight: 300;
-    letter-spacing: 0.2em;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    opacity: 0.8;
-    transition: opacity 0.3s;
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
 }
 
-.folder-card:hover .folder-name {
+/* Content Preview (Peeking out) */
+.folder-preview-items {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    z-index: 5;
+    transform: translateZ(-5px);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow: hidden;
+}
+
+.preview-item {
+    height: 33%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transform: translateY(20px);
+    /* Tucked in */
+    transition: transform 0.5s ease;
+    opacity: 0.7;
+}
+
+/* Hover Effects */
+.folder-card:hover .folder-front {
+    transform: rotateX(-30deg) translateY(10px);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.folder-card:hover .preview-item {
+    transform: translateY(0);
+    /* Pop up */
     opacity: 1;
 }
 
-.folder-preview {
-    display: none;
-    /* Hidden by default for minimal look, or we can make it subtle */
+.folder-card:hover .preview-item:nth-child(2) {
+    transition-delay: 0.05s;
 }
 
-/* Footer */
+.folder-card:hover .preview-item:nth-child(3) {
+    transition-delay: 0.1s;
+}
+
+
+/* Footer - Sticky and Glass */
 footer {
-    padding: 3rem 2rem;
-    text-align: center;
-    z-index: 10;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    margin-top: auto;
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    min-width: 300px;
+    padding: 1rem 2rem;
+    z-index: 100;
+
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .footer-content {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 1.5rem;
+    justify-content: center;
+    gap: 2rem;
 }
 
 .socials {
     display: flex;
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
 .socials a {
     color: #fff;
-    font-size: 1.2rem;
-    opacity: 0.6;
-    transition: opacity 0.3s;
+    font-size: 1.1rem;
+    opacity: 0.7;
+    transition: all 0.3s;
 }
 
 .socials a:hover {
     opacity: 1;
+    transform: translateY(-2px);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 footer p {
-    font-size: 0.8rem;
-    opacity: 0.4;
-    letter-spacing: 0.1em;
+    font-size: 0.75rem;
+    opacity: 0.5;
+    letter-spacing: 0.05em;
+    margin: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    padding-left: 1.5rem;
 }
 
 /* Liquid Modal */
@@ -195,7 +280,8 @@ footer p {
     backdrop-filter: blur(20px);
     /* Strong blur */
     -webkit-backdrop-filter: blur(20px);
-    z-index: 100;
+    z-index: 200;
+    /* Higher than footer */
     justify-content: center;
     align-items: center;
     opacity: 0;
@@ -345,5 +431,23 @@ footer p {
         height: 100%;
         border: none;
         padding: 1.5rem;
+    }
+
+    footer {
+        width: 90%;
+        bottom: 1rem;
+        padding: 1rem;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    footer p {
+        border-left: none;
+        padding-left: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        padding-top: 0.5rem;
     }
 }
