@@ -77,8 +77,20 @@ function App() {
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setTimeout(() => setSelectedFolder(null), 300); // Wait for animation
+    const overlay = document.querySelector('.modal-overlay');
+    if (overlay) {
+      overlay.classList.add('closing');
+      overlay.classList.remove('active');
+    }
+
+    setTimeout(() => {
+      setIsModalOpen(false);
+      setSelectedFolder(null);
+      const overlay = document.querySelector('.modal-overlay');
+      if (overlay) {
+        overlay.classList.remove('closing');
+      }
+    }, 600); // Match animation duration
   };
 
   return (

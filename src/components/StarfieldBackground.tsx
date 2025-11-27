@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { MeshTransmissionMaterial, Float, Environment } from '@react-three/drei';
+import { Float, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import './StarfieldBackground.css';
 
-// Single holographic 3D object
-const HolographicSphere: React.FC = () => {
+// Single white 3D object
+const WhiteSphere: React.FC = () => {
     const meshRef = useRef<THREE.Mesh>(null);
 
     useFrame((state) => {
@@ -18,25 +18,13 @@ const HolographicSphere: React.FC = () => {
     return (
         <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.4}>
             <mesh ref={meshRef} position={[0, 0, 0]}>
-                <icosahedronGeometry args={[1.5, 1]} />
-                <MeshTransmissionMaterial
-                    backside={false}
-                    samples={3}
-                    resolution={256}
-                    transmission={1}
-                    thickness={2}
-                    chromaticAberration={0.4}
-                    anisotropy={0.3}
-                    distortion={0.3}
-                    distortionScale={0.2}
-                    temporalDistortion={0.1}
-                    iridescence={1}
-                    iridescenceIOR={1.6}
-                    iridescenceThicknessRange={[0, 1400]}
-                    roughness={0.05}
-                    clearcoat={1}
+                <icosahedronGeometry args={[1.5, 2]} />
+                <meshStandardMaterial
                     color="#ffffff"
-                    envMapIntensity={1.5}
+                    emissive="#ffffff"
+                    emissiveIntensity={0.3}
+                    roughness={0.1}
+                    metalness={0.8}
                 />
             </mesh>
         </Float>
@@ -106,10 +94,10 @@ const StarfieldBackground: React.FC = () => {
             <canvas ref={canvasRef} className="starfield-canvas"></canvas>
             <div className="holographic-container">
                 <Canvas camera={{ position: [0, 0, 8], fov: 35 }} gl={{ alpha: true, antialias: true }}>
-                    <ambientLight intensity={0.3} />
-                    <pointLight position={[10, 10, 10]} intensity={1} />
+                    <ambientLight intensity={0.5} />
+                    <pointLight position={[10, 10, 10]} intensity={1.5} />
                     <Environment preset="city" />
-                    <HolographicSphere />
+                    <WhiteSphere />
                 </Canvas>
             </div>
         </div>

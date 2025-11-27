@@ -303,7 +303,7 @@ footer p {
   padding-left: 1.5rem;
 }
 
-/* Modal */
+/* Modal with Hyperspace Effect */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -319,6 +319,61 @@ footer p {
   opacity: 0;
   pointer-events: auto;
   transition: opacity 0.4s ease, backdrop-filter 0.4s ease;
+}
+
+.modal-overlay::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, transparent 0%, transparent 30%, rgba(255, 255, 255, 0.02) 30.5%, transparent 31%);
+  background-size: 3px 3px;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.modal-overlay.active::before {
+  animation: hyperspace 0.6s ease-out forwards;
+}
+
+@keyframes hyperspace {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.1);
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(3);
+  }
+}
+
+.modal-overlay.closing::before {
+  animation: hyperspace-reverse 0.6s ease-in forwards;
+}
+
+@keyframes hyperspace-reverse {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(3);
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.1);
+  }
 }
 
 .modal-overlay.active {
