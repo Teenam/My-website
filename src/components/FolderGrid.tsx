@@ -14,7 +14,7 @@ interface FolderData {
 
 interface FolderGridProps {
     folders: FolderData[];
-    onFolderClick: (folder: FolderData, e: React.MouseEvent) => void;
+    onFolderClick: (folderName: string, rect: DOMRect) => void;
 }
 
 const FolderGrid: React.FC<FolderGridProps> = ({ folders, onFolderClick }) => {
@@ -25,7 +25,7 @@ const FolderGrid: React.FC<FolderGridProps> = ({ folders, onFolderClick }) => {
                     key={folder.name}
                     name={folder.name}
                     files={folder.files}
-                    onClick={(e) => onFolderClick(folder, e)}
+                    onClick={(e) => onFolderClick(folder.name, (e.target as HTMLElement).getBoundingClientRect())}
                 />
             ))}
         </div>

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import StarfieldBackground from './components/StarfieldBackground';
+import Header from './components/Header';
 import FolderGrid from './components/FolderGrid';
-import Footer from './components/Footer';
+import FolderCarousel from './components/FolderCarousel';
 import FileModal from './components/FileModal';
+import Footer from './components/Footer';
+import StarfieldBackground from './components/StarfieldBackground';
 import './App.css';
 
 interface FileData {
@@ -23,11 +25,15 @@ interface ConfigData {
   socials: { icon: string; link: string }[];
 }
 
+interface ContentData {
+  folders: FolderData[];
+}
+
 function App() {
-  const [folders, setFolders] = useState<FolderData[]>([]);
-  const [selectedFolder, setSelectedFolder] = useState<FolderData | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [content, setContent] = useState<ContentData | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [originRect, setOriginRect] = useState<DOMRect | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'carousel'>('grid');
   const [config, setConfig] = useState<ConfigData>({
     title: "PORTFOLIO",
     subtitle: "COLLECTION 2025",
@@ -40,12 +46,7 @@ function App() {
     fetch('/My-website/content.json')
       .then(res => res.json())
       .then(data => {
-        // Transform the legacy data format if necessary
-        // Assuming legacy content.json structure is compatible or we map it
-        // Legacy structure: [{ name: "Folder", files: ["file.jpg", ...] }]
-        // We need to map files to objects with type and url
-
-        const transformedData = data.map((folder: any) => ({
+        const transformedFolders = data.map((folder: any) => ({
           name: folder.name,
           files: folder.files.map((file: string) => {
             const ext = file.split('.').pop()?.toLowerCase() || '';
@@ -61,7 +62,7 @@ function App() {
             };
           })
         }));
-        setFolders(transformedData);
+        setContent({ folders: transformedFolders });
       })
       .catch(err => console.error("Failed to load content:", err));
 
@@ -75,11 +76,9 @@ function App() {
       .catch(err => console.error("Failed to load config:", err));
   }, []);
 
-  const handleFolderClick = (folder: FolderData, e: React.MouseEvent) => {
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+  const handleFolderClick = (folderName: string, rect: DOMRect) => {
     setOriginRect(rect);
-    setSelectedFolder(folder);
-    setIsModalOpen(true);
+    setSelectedFolder(folderName);
   };
 
   const handleCloseModal = () => {
@@ -90,7 +89,6 @@ function App() {
     }
 
     setTimeout(() => {
-      setIsModalOpen(false);
       setSelectedFolder(null);
       const overlay = document.querySelector('.modal-overlay');
       if (overlay) {
@@ -99,34 +97,55 @@ function App() {
     }, 600); // Match animation duration
   };
 
+  if (!config || !content) return <div className="loading">Loading...</div>;
+
+  const currentFolderFiles = selectedFolder
+    ? content.folders.find(f => f.name === selectedFolder)?.files || []
+    : [];
+
   return (
-    <>
+    <div className="app">
       <StarfieldBackground />
 
-      <main style={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <header>
-          <div className="header-content">
-            <h1>{config.title}</h1>
-            <div className="decorative-bar"></div>
-            <p className="subtitle">{config.subtitle}</p>
-          </div>
-        </header>
+      <Header
+        title={config.title}
+        subtitle={config.subtitle}
+      />
 
-        <FolderGrid folders={folders} onFolderClick={handleFolderClick} />
+      {/* View Toggle Button */}
+      <button
+        className="view-toggle"
+        onClick={() => setViewMode(prev => prev === 'grid' ? 'carousel' : 'grid')}
+        title={viewMode === 'grid' ? "Switch to Carousel" : "Switch to Grid"}
+      >
+        <i className={`fas ${viewMode === 'grid' ? 'fa-circle-notch' : 'fa-th-large'}`}></i>
+      </button>
 
-        <Footer socials={config.socials} version={config.version} />
-      </main>
-
-      {selectedFolder && (
-        <FileModal
-          isOpen={isModalOpen}
-          folderName={selectedFolder.name}
-          files={selectedFolder.files}
-          onClose={handleCloseModal}
-          originRect={originRect}
+      {viewMode === 'grid' ? (
+        <FolderGrid
+          folders={content.folders}
+          onFolderClick={handleFolderClick}
+        />
+      ) : (
+        <FolderCarousel
+          folders={content.folders}
+          onFolderClick={handleFolderClick}
         />
       )}
-    </>
+
+      <FileModal
+        isOpen={!!selectedFolder}
+        folderName={selectedFolder || ''}
+        files={currentFolderFiles}
+        onClose={handleCloseModal}
+        originRect={originRect}
+      />
+
+      <Footer
+        socials={config.socials}
+        version={config.version}
+      />
+    </div>
   );
 }
 
