@@ -1,4 +1,3 @@
-```typescript
 import React, { useEffect, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { MeshTransmissionMaterial, Float, Environment } from '@react-three/drei';
@@ -86,7 +85,7 @@ const StarfieldBackground: React.FC = () => {
                     star.twinkleSpeed *= -1;
                 }
 
-                ctx.fillStyle = `rgba(255, 255, 255, ${ Math.max(0, Math.min(1, star.opacity)) })`;
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0, Math.min(1, star.opacity))})`;
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
                 ctx.fill();
