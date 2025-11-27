@@ -36,24 +36,31 @@ h1 {
 
 /* Header */
 header {
-  padding: 4rem 2rem;
+  padding: 2rem 2rem;
   text-align: center;
-  position: relative;
-  z-index: 10;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
 }
 
 .header-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .decorative-bar {
   width: 60px;
   height: 4px;
   background: #fff;
-  margin: 1rem 0;
+  margin: 0.5rem 0;
+  border-radius: 2px;
 }
 
 .subtitle {
@@ -66,10 +73,11 @@ header {
 
 /* Folders Grid */
 .folders-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 4rem;
-  padding: 2rem;
+  padding: 4rem 2rem;
   max-width: 1400px;
   margin: 0 auto;
   perspective: 1000px;
@@ -79,7 +87,6 @@ header {
 .folder-card {
   width: 220px;
   height: 180px;
-  margin: 0 auto;
   position: relative;
   transform-style: preserve-3d;
   cursor: pointer;
@@ -95,7 +102,8 @@ header {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
+  border-radius: 20px;
+  /* Consistent rounded corners */
   transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -125,7 +133,7 @@ header {
   width: 40%;
   height: 10px;
   background: inherit;
-  border-radius: 12px 12px 0 0;
+  border-radius: 20px 20px 0 0;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   border-left: 1px solid rgba(255, 255, 255, 0.2);
   border-right: 1px solid rgba(255, 255, 255, 0.2);
@@ -160,7 +168,7 @@ header {
 .preview-item {
   height: 33%;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transform: translateY(20px);
   transition: transform 0.5s ease;
@@ -257,13 +265,18 @@ footer p {
   justify-content: center;
   align-items: center;
   opacity: 0;
-  pointer-events: none;
+  pointer-events: auto;
   transition: opacity 0.3s ease;
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>') 16 16, pointer;
 }
 
 .modal-overlay.active {
   opacity: 1;
   pointer-events: auto;
+}
+
+.modal-overlay:not(.active) {
+  pointer-events: none;
 }
 
 .modal-content {
@@ -277,6 +290,9 @@ footer p {
   box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
   transform: scale(0.95);
   transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  border-radius: 20px;
+  cursor: default;
+  /* Reset cursor inside modal */
 }
 
 .modal-overlay.active .modal-content {
@@ -294,6 +310,7 @@ footer p {
   transition: all 0.3s;
   background: none;
   border: none;
+  user-select: none;
 }
 
 .close-modal:hover {
@@ -311,6 +328,8 @@ footer p {
 .file-item {
   background: rgba(255, 255, 255, 0.02);
   transition: transform 0.3s ease;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .file-item:hover {

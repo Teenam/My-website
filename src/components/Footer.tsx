@@ -1,15 +1,25 @@
 import React from 'react';
 
-const Footer: React.FC = () => {
+interface Social {
+    icon: string;
+    link: string;
+}
+
+interface FooterProps {
+    socials: Social[];
+    version: string;
+}
+
+const Footer: React.FC<FooterProps> = ({ socials, version }) => {
     return (
         <footer>
             <div className="footer-content">
                 <div className="socials">
-                    <a href="#"><i className="fab fa-instagram"></i></a>
-                    <a href="#"><i className="fab fa-twitter"></i></a>
-                    <a href="#"><i className="far fa-envelope"></i></a>
+                    {socials.map((social, index) => (
+                        <a key={index} href={social.link}><i className={social.icon}></i></a>
+                    ))}
                 </div>
-                <p>&copy; 2025 Liquid Glass. All Rights Reserved.</p>
+                <p>&copy; 2025 Liquid Glass. All Rights Reserved. <span style={{ opacity: 0.5, marginLeft: '10px' }}>{version}</span></p>
             </div>
         </footer>
     );

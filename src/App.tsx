@@ -16,12 +16,26 @@ interface FolderData {
   files: FileData[];
 }
 
+interface ConfigData {
+  title: string;
+  subtitle: string;
+  version: string;
+  socials: { icon: string; link: string }[];
+}
+
 function App() {
   const [folders, setFolders] = useState<FolderData[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<FolderData | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [config, setConfig] = useState<ConfigData>({
+    title: "PORTFOLIO",
+    subtitle: "COLLECTION 2025",
+    version: "v1.0.0",
+    socials: []
+  });
 
   useEffect(() => {
+    // Load Content
     fetch('/content.json')
       .then(res => res.json())
       .then(data => {
@@ -49,6 +63,12 @@ function App() {
         setFolders(transformedData);
       })
       .catch(err => console.error("Failed to load content:", err));
+
+    // Load Config
+    fetch('/config.json')
+      .then(res => res.json())
+      .then(data => setConfig(data))
+      .catch(err => console.error("Failed to load config:", err));
   }, []);
 
   const handleFolderClick = (folder: FolderData) => {
@@ -68,15 +88,15 @@ function App() {
       <main style={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <header>
           <div className="header-content">
-            <h1>PORTFOLIO</h1>
+            <h1>{config.title}</h1>
             <div className="decorative-bar"></div>
-            <p className="subtitle">COLLECTION 2025</p>
+            <p className="subtitle">{config.subtitle}</p>
           </div>
         </header>
 
         <FolderGrid folders={folders} onFolderClick={handleFolderClick} />
 
-        <Footer />
+        <Footer socials={config.socials} version={config.version} />
       </main>
 
       {selectedFolder && (

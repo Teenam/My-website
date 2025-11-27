@@ -19,18 +19,19 @@ const Sphere = ({ position, scale, speed, phase }: { position: [number, number, 
     return (
         <Float speed={speed * 2} rotationIntensity={0.5} floatIntensity={0.5}>
             <mesh ref={meshRef} position={position} scale={scale}>
-                <sphereGeometry args={[1.5, 64, 64]} />
+                <sphereGeometry args={[1.5, 32, 32]} /> {/* Lower poly for performance */}
                 <MeshTransmissionMaterial
                     backside
-                    samples={4}
-                    thickness={2}
-                    chromaticAberration={0.05}
-                    anisotropy={0.1}
-                    distortion={0.1}
-                    distortionScale={0.1}
-                    temporalDistortion={0.1}
+                    samples={4} // Lower samples for performance
+                    resolution={512} // Lower resolution
+                    thickness={3}
+                    chromaticAberration={0.5} // High for rainbow effect
+                    anisotropy={0.5}
+                    distortion={0.5}
+                    distortionScale={0.5}
+                    temporalDistortion={0.2}
                     iridescence={1}
-                    iridescenceIOR={1.3}
+                    iridescenceIOR={1.8} // Higher IOR for stronger effect
                     iridescenceThicknessRange={[0, 1400]}
                     roughness={0.1}
                     clearcoat={1}
@@ -58,7 +59,7 @@ const BackgroundCanvas = () => {
 
     return (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1, background: 'radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%)' }}>
-            <Canvas camera={{ position: [0, 0, 15], fov: 45 }}>
+            <Canvas camera={{ position: [0, 0, 15], fov: 45 }} gl={{ alpha: true, antialias: true }}>
                 <ambientLight intensity={0.5} />
                 <pointLight position={[20, 20, 20]} intensity={1.5} />
                 <pointLight position={[-20, -10, -10]} intensity={1} color="#a8c0ff" />
