@@ -1,37 +1,51 @@
-import React, { useEffect, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import React, { useEffect, useRef, useMemo } from 'react';
+import { Canvas } from '@react-three/fiber';
 import { Float, Environment } from '@react-three/drei';
-import * as THREE from 'three';
 import './StarfieldBackground.css';
 
-// Single white 3D object
-const WhiteSphere: React.FC = () => {
-    const meshRef = useRef<THREE.Mesh>(null);
+// Random white 3D objects
+const RandomObjects: React.FC = () => {
+    const count = 15; // Number of objects
 
-    useFrame((state) => {
-        if (meshRef.current) {
-            meshRef.current.rotation.y = state.clock.elapsedTime * 0.2;
-            meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
-
-            // Constrained wandering movement (stays on right side)
-            meshRef.current.position.x = 3 + Math.sin(state.clock.elapsedTime * 0.5) * 1.5;
-            meshRef.current.position.y = Math.cos(state.clock.elapsedTime * 0.3) * 1.2;
-        }
-    });
+    const objects = useMemo(() => {
+        const shapes = ['box', 'tetrahedron', 'octahedron', 'dodecahedron'];
+        return new Array(count).fill(0).map(() => ({
+            position: [
+                (Math.random() - 0.5) * 14, // x spread
+                (Math.random() - 0.5) * 8,  // y spread
+                (Math.random() - 0.5) * 4   // z spread
+            ] as [number, number, number],
+            rotation: [
+                Math.random() * Math.PI,
+                Math.random() * Math.PI,
+                Math.random() * Math.PI
+            ] as [number, number, number],
+            scale: 0.2 + Math.random() * 0.4,
+            shape: shapes[Math.floor(Math.random() * shapes.length)],
+            speed: 0.5 + Math.random() * 1
+        }));
+    }, []);
 
     return (
-        <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.4}>
-            <mesh ref={meshRef} position={[3, 0, 0]}>
-                <icosahedronGeometry args={[0.8, 2]} />
-                <meshStandardMaterial
-                    color="#ffffff"
-                    emissive="#ffffff"
-                    emissiveIntensity={0.3}
-                    roughness={0.1}
-                    metalness={0.8}
-                />
-            </mesh>
-        </Float>
+        <>
+            {objects.map((obj, i) => (
+                <Float key={i} speed={obj.speed} rotationIntensity={1} floatIntensity={1}>
+                    <mesh position={obj.position} rotation={obj.rotation} scale={obj.scale}>
+                        {obj.shape === 'box' && <boxGeometry args={[1, 1, 1]} />}
+                        {obj.shape === 'tetrahedron' && <tetrahedronGeometry args={[1]} />}
+                        {obj.shape === 'octahedron' && <octahedronGeometry args={[1]} />}
+                        {obj.shape === 'dodecahedron' && <dodecahedronGeometry args={[1]} />}
+                        <meshStandardMaterial
+                            color="#ffffff"
+                            roughness={0.4}
+                            metalness={0.2}
+                            emissive="#ffffff"
+                            emissiveIntensity={0.1}
+                        />
+                    </mesh>
+                </Float>
+            ))}
+        </>
     );
 };
 
@@ -101,7 +115,7 @@ const StarfieldBackground: React.FC = () => {
                     <ambientLight intensity={0.5} />
                     <pointLight position={[10, 10, 10]} intensity={1.5} />
                     <Environment preset="city" />
-                    <WhiteSphere />
+                    <RandomObjects />
                 </Canvas>
             </div>
         </div>
