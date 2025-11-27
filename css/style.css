@@ -1,11 +1,11 @@
 :root {
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
     --text-color: #ffffff;
-    --accent-color: rgba(255, 255, 255, 0.8);
-    --folder-bg: rgba(255, 255, 255, 0.05);
-    --folder-hover: rgba(255, 255, 255, 0.2);
+    --accent-color: #ffffff;
+    --font-heading: 'Bodoni Moda', serif;
+    --font-body: 'Inter', sans-serif;
 }
 
 * {
@@ -15,11 +15,14 @@
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background: #0f0f1a; /* Fallback */
+    font-family: var(--font-body);
+    background: #000;
+    /* Deep black for luxury contrast */
     color: var(--text-color);
     overflow-x: hidden;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 #canvas-container {
@@ -29,123 +32,157 @@ body {
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #0f0f1a 100%);
+    background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%);
 }
 
 header {
-    padding: 2rem;
+    padding: 4rem 2rem;
     text-align: center;
     position: relative;
     z-index: 10;
 }
 
+.header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
 h1 {
-    font-size: 3rem;
-    font-weight: 200;
-    letter-spacing: 0.5rem;
+    font-family: var(--font-heading);
+    font-size: 5rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    background: linear-gradient(to right, #fff, #a8c0ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 20px rgba(168, 192, 255, 0.3);
-    margin-bottom: 1rem;
+    color: #fff;
+    margin: 0;
+    line-height: 1;
+}
+
+.decorative-bar {
+    width: 60px;
+    height: 4px;
+    background: #fff;
+    margin: 1rem 0;
+}
+
+.subtitle {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.7;
 }
 
 main {
     position: relative;
     z-index: 10;
     padding: 2rem;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
+    flex: 1;
+    width: 100%;
 }
 
 .folders-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 4rem;
     padding: 2rem;
 }
 
+/* Minimal Folder Styles */
 .folder-card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 2rem;
+    background: transparent;
+    border: none;
+    padding: 1rem;
     text-align: center;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: var(--glass-shadow);
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
     position: relative;
-    overflow: hidden;
-}
-
-.folder-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.2),
-        transparent
-    );
-    transition: 0.5s;
-}
-
-.folder-card:hover::before {
-    left: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .folder-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    background: var(--folder-hover);
-    border-color: var(--accent-color);
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+    transform: translateY(-10px);
 }
 
 .folder-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    color: var(--accent-color);
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-    transition: transform 0.3s ease;
+    font-size: 6rem;
+    /* Bigger icons */
+    margin-bottom: 1.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    transition: all 0.5s ease;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
 }
 
 .folder-card:hover .folder-icon {
-    transform: scale(1.1) rotate(5deg);
+    transform: scale(1.1);
+    color: #fff;
+    filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.4));
 }
 
 .folder-name {
-    font-size: 1.2rem;
-    font-weight: 500;
-    letter-spacing: 1px;
-}
-
-.folder-preview {
-    margin-top: 1rem;
-    height: 100px;
-    border-radius: 10px;
-    overflow: hidden;
-    opacity: 0.7;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.8;
     transition: opacity 0.3s;
 }
 
-.folder-card:hover .folder-preview {
+.folder-card:hover .folder-name {
     opacity: 1;
 }
 
-.folder-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.folder-preview {
+    display: none;
+    /* Hidden by default for minimal look, or we can make it subtle */
 }
 
-/* Modal for File View */
+/* Footer */
+footer {
+    padding: 3rem 2rem;
+    text-align: center;
+    z-index: 10;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: auto;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.socials {
+    display: flex;
+    gap: 2rem;
+}
+
+.socials a {
+    color: #fff;
+    font-size: 1.2rem;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+}
+
+.socials a:hover {
+    opacity: 1;
+}
+
+footer p {
+    font-size: 0.8rem;
+    opacity: 0.4;
+    letter-spacing: 0.1em;
+}
+
+/* Liquid Modal */
 .modal {
     display: none;
     position: fixed;
@@ -153,13 +190,16 @@ main {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.6);
+    /* Darker dim */
+    backdrop-filter: blur(20px);
+    /* Strong blur */
+    -webkit-backdrop-filter: blur(20px);
     z-index: 100;
     justify-content: center;
     align-items: center;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.5s ease;
 }
 
 .modal.active {
@@ -168,59 +208,142 @@ main {
 }
 
 .modal-content {
-    background: rgba(25, 25, 35, 0.9);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 2rem;
-    max-width: 90%;
-    max-height: 90%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0;
+    /* Sharp corners for luxury */
+    padding: 3rem;
+    width: 90%;
+    height: 90%;
     overflow-y: auto;
     position: relative;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+    transform: scale(0.95);
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.modal.active .modal-content {
+    transform: scale(1);
+}
+
+.modal h2 {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 400;
+    letter-spacing: 0.1em;
 }
 
 .close-modal {
     position: absolute;
-    top: 1rem;
-    right: 1.5rem;
+    top: 2rem;
+    right: 2rem;
     font-size: 2rem;
     cursor: pointer;
     color: #fff;
-    transition: color 0.3s;
+    opacity: 0.5;
+    transition: all 0.3s;
 }
 
 .close-modal:hover {
-    color: #ff4757;
+    opacity: 1;
+    transform: rotate(90deg);
 }
 
 .file-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
 }
 
 .file-item {
-    border-radius: 10px;
+    border-radius: 0;
     overflow: hidden;
-    transition: transform 0.3s;
+    transition: transform 0.5s ease;
+    background: rgba(255, 255, 255, 0.02);
+    display: flex;
+    flex-direction: column;
 }
 
 .file-item:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .file-item img {
     width: 100%;
     height: auto;
     display: block;
+    opacity: 0.9;
+    transition: opacity 0.3s;
+}
+
+.file-item:hover img {
+    opacity: 1;
+}
+
+.file-item video {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* File Icon Card (for non-visual files) */
+.file-icon-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-decoration: none;
+    color: #fff;
+    height: 100%;
+    min-height: 200px;
+    text-align: center;
+}
+
+.file-icon-card i {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+    transition: all 0.3s;
+}
+
+.file-item:hover .file-icon-card i {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.file-name {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    opacity: 0.6;
+    word-break: break-all;
+    margin-top: 1rem;
+}
+
+.file-item audio {
+    width: 90%;
+    margin-bottom: 1rem;
 }
 
 @media (max-width: 768px) {
     h1 {
-        font-size: 2rem;
+        font-size: 3rem;
     }
+
     .folders-grid {
         grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .modal-content {
+        width: 100%;
+        height: 100%;
+        border: none;
+        padding: 1.5rem;
     }
 }

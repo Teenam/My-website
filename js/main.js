@@ -1,4 +1,7 @@
 // Main Logic
+let isModalOpen = false;
+let targetCameraZ = 5;
+
 document.addEventListener('DOMContentLoaded', () => {
     initThreeJS();
     loadContent();
@@ -25,14 +28,11 @@ function renderFolders(folders) {
 
         // Find a preview image (first image file)
         const previewFile = folder.files.find(f => f.match(/\.(jpg|jpeg|png|gif|webp)$/i));
-        const previewHtml = previewFile
-            ? `<div class="folder-preview"><img src="content/${folder.name}/${previewFile}" alt="Preview"></div>`
-            : '<div class="folder-preview" style="background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;"><span>No Preview</span></div>';
+        // We only use the icon for the main view now, but keep preview logic if we want to add it back subtly
 
         card.innerHTML = `
             <div class="folder-icon"><i class="fas fa-folder-open"></i></div>
             <div class="folder-name">${folder.name.replace(/_/g, ' ')}</div>
-            ${previewHtml}
         `;
 
         card.addEventListener('click', () => openFolder(folder));
@@ -49,28 +49,74 @@ function openFolder(folder) {
     modalGrid.innerHTML = '';
 
     folder.files.forEach(file => {
-        if (file.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-            const item = document.createElement('div');
-            item.className = 'file-item';
-            item.innerHTML = `<img src="content/${folder.name}/${file}" loading="lazy" alt="${file}">`;
-            modalGrid.appendChild(item);
+        const item = document.createElement('div');
+        item.className = 'file-item';
+
+        const ext = file.split('.').pop().toLowerCase();
+        const filePath = `content/${folder.name}/${file}`;
+
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+            // Image
+            item.innerHTML = `<img src="${filePath}" loading="lazy" alt="${file}">`;
+        } else if (['mp4', 'webm', 'ogg'].includes(ext)) {
+            // Video
+            item.innerHTML = `
+                <video controls preload="metadata">
+                    <source src="${filePath}" type="video/${ext}">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="file-name">${file}</div>
+            `;
+        } else if (['mp3', 'wav', 'mpeg'].includes(ext)) {
+            // Audio
+            item.innerHTML = `
+                <div class="file-icon-card">
+                    <i class="fas fa-music"></i>
+                    <audio controls>
+                        <source src="${filePath}" type="audio/${ext}">
+                    </audio>
+                    <div class="file-name">${file}</div>
+                </div>
+            `;
+        } else {
+            // Other Documents (PDF, DOC, etc.)
+            let iconClass = 'fa-file';
+            if (ext === 'pdf') iconClass = 'fa-file-pdf';
+            else if (['doc', 'docx'].includes(ext)) iconClass = 'fa-file-word';
+            else if (['xls', 'xlsx'].includes(ext)) iconClass = 'fa-file-excel';
+            else if (['ppt', 'pptx'].includes(ext)) iconClass = 'fa-file-powerpoint';
+            else if (['txt', 'md'].includes(ext)) iconClass = 'fa-file-alt';
+            else if (['zip', 'rar'].includes(ext)) iconClass = 'fa-file-archive';
+            else if (['html', 'css', 'js'].includes(ext)) iconClass = 'fa-file-code';
+
+            item.innerHTML = `
+                <a href="${filePath}" target="_blank" class="file-icon-card">
+                    <i class="fas ${iconClass}"></i>
+                    <div class="file-name">${file}</div>
+                </a>
+            `;
         }
-        // Add more file types here if needed
+
+        modalGrid.appendChild(item);
     });
 
     modal.classList.add('active');
+    isModalOpen = true; // Trigger 3D reaction
 }
 
 // Close Modal Logic
-document.querySelector('.close-modal').addEventListener('click', () => {
-    document.getElementById('file-modal').classList.remove('active');
-});
+document.querySelector('.close-modal').addEventListener('click', closeModal);
 
 document.getElementById('file-modal').addEventListener('click', (e) => {
     if (e.target.id === 'file-modal') {
-        document.getElementById('file-modal').classList.remove('active');
+        closeModal();
     }
 });
+
+function closeModal() {
+    document.getElementById('file-modal').classList.remove('active');
+    isModalOpen = false; // Trigger 3D reaction
+}
 
 // Three.js Background
 function initThreeJS() {
@@ -80,50 +126,55 @@ function initThreeJS() {
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio); // High DPI for smoothness
     container.appendChild(renderer.domElement);
 
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0xffffff, 1);
-    pointLight.position.set(10, 10, 10);
+    const pointLight = new THREE.PointLight(0xffffff, 1.2);
+    pointLight.position.set(20, 20, 20);
     scene.add(pointLight);
 
-    const pointLight2 = new THREE.PointLight(0xa8c0ff, 1);
-    pointLight2.position.set(-10, -10, -10);
+    const pointLight2 = new THREE.PointLight(0xa8c0ff, 0.8);
+    pointLight2.position.set(-20, -10, -10);
     scene.add(pointLight2);
 
-    // Floating Objects (Pearlescent Blobs)
-    const geometry = new THREE.IcosahedronGeometry(1, 1); // Low poly for performance, or higher for smooth
+    // Floating Objects (Smooth Pearls)
+    const geometry = new THREE.SphereGeometry(1.5, 64, 64); // High poly for smoothness
     const material = new THREE.MeshPhysicalMaterial({
         color: 0xffffff,
         metalness: 0.1,
-        roughness: 0.1,
-        transmission: 0.6, // Glass-like
-        thickness: 0.5,
-        clearcoat: 1,
+        roughness: 0.2,
+        transmission: 0.2, // Slight translucency
+        thickness: 1.0,
+        clearcoat: 1.0,
         clearcoatRoughness: 0.1,
+        reflectivity: 1.0,
+        ior: 1.5,
     });
 
     const objects = [];
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 12; i++) {
         const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.x = (Math.random() - 0.5) * 20;
-        mesh.position.y = (Math.random() - 0.5) * 20;
-        mesh.position.z = (Math.random() - 0.5) * 10 - 5;
-        mesh.rotation.x = Math.random() * Math.PI;
-        mesh.rotation.y = Math.random() * Math.PI;
 
-        const scale = Math.random() * 1 + 0.5;
+        // Random positions spread out
+        mesh.position.x = (Math.random() - 0.5) * 30;
+        mesh.position.y = (Math.random() - 0.5) * 30;
+        mesh.position.z = (Math.random() - 0.5) * 15 - 10;
+
+        const scale = Math.random() * 0.8 + 0.4;
         mesh.scale.set(scale, scale, scale);
 
         scene.add(mesh);
         objects.push({
             mesh: mesh,
-            speedX: (Math.random() - 0.5) * 0.01,
-            speedY: (Math.random() - 0.5) * 0.01,
-            rotSpeed: (Math.random() - 0.5) * 0.02
+            initialPos: mesh.position.clone(),
+            speedX: (Math.random() - 0.5) * 0.005,
+            speedY: (Math.random() - 0.5) * 0.005,
+            rotSpeed: (Math.random() - 0.5) * 0.002,
+            phase: Math.random() * Math.PI * 2
         });
     }
 
@@ -133,20 +184,30 @@ function initThreeJS() {
     function animate() {
         requestAnimationFrame(animate);
 
-        objects.forEach(obj => {
-            obj.mesh.position.x += obj.speedX;
-            obj.mesh.position.y += obj.speedY;
+        const time = Date.now() * 0.001;
+
+        // Camera Zoom Reaction
+        // If modal is open, zoom out (increase Z). If closed, return to 5.
+        const targetZ = isModalOpen ? 15 : 5;
+        camera.position.z += (targetZ - camera.position.z) * 0.05;
+
+        objects.forEach((obj, i) => {
+            // Gentle floating
+            obj.mesh.position.y += Math.sin(time + obj.phase) * 0.002;
             obj.mesh.rotation.x += obj.rotSpeed;
             obj.mesh.rotation.y += obj.rotSpeed;
 
-            // Boundary check to keep them in view
-            if (Math.abs(obj.mesh.position.x) > 12) obj.speedX *= -1;
-            if (Math.abs(obj.mesh.position.y) > 8) obj.speedY *= -1;
-        });
+            // Reactivity: When modal is open, push objects slightly further apart or just let camera zoom handle it.
+            // Let's add a subtle "expansion" effect
+            const expansionFactor = isModalOpen ? 1.5 : 1.0;
 
-        // Mouse interaction (subtle parallax)
-        // camera.position.x += (mouseX - camera.position.x) * 0.05;
-        // camera.position.y += (-mouseY - camera.position.y) * 0.05;
+            // Smoothly interpolate positions
+            const targetX = obj.initialPos.x * expansionFactor;
+            const targetY = obj.initialPos.y * expansionFactor;
+
+            obj.mesh.position.x += (targetX - obj.mesh.position.x) * 0.05;
+            obj.mesh.position.y += (targetY - obj.mesh.position.y) * 0.05;
+        });
 
         renderer.render(scene, camera);
     }

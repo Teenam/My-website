@@ -7,7 +7,11 @@
     <title>Liquid Glass Portfolio</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;700&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 
@@ -15,7 +19,11 @@
     <div id="canvas-container"></div>
 
     <header>
-        <h1>My Portfolio</h1>
+        <div class="header-content">
+            <h1>PORTFOLIO</h1>
+            <div class="decorative-bar"></div>
+            <p class="subtitle">COLLECTION 2025</p>
+        </div>
     </header>
 
     <main>
@@ -25,13 +33,22 @@
         </div>
     </main>
 
+    <footer>
+        <div class="footer-content">
+            <div class="socials">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="far fa-envelope"></i></a>
+            </div>
+            <p>&copy; 2025 Liquid Glass. All Rights Reserved.</p>
+        </div>
+    </footer>
+
     <!-- Modal for viewing files -->
     <div id="file-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
-            <h2 id="modal-title"
-                style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
-                Folder Name</h2>
+            <h2 id="modal-title">Folder Name</h2>
             <div id="modal-grid" class="file-grid">
                 <!-- Files will be injected here -->
             </div>
