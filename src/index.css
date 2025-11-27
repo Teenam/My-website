@@ -350,28 +350,36 @@ footer p {
   opacity: 0;
 }
 
-.folder-cover.open .folder-name {
-  opacity: 0;
-  transform: translateY(-50px);
-  /* Move up as it fades */
-}
-
-.modal-content h2 {
+/* Floating Title Animation */
+.floating-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   font-family: var(--font-display);
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  letter-spacing: 0.1em;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: slideUpFade 0.5s ease forwards 0.3s;
+  font-size: 0.7rem;
+  /* Start small like on folder */
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #fff;
+  z-index: 202;
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-shadow: 0 2px 8px rgba(168, 192, 255, 0.3);
+  pointer-events: none;
+  width: 100%;
+  text-align: center;
 }
 
-@keyframes slideUpFade {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.floating-title.animate-to-header {
+  top: 3rem;
+  /* Move to header position */
+  transform: translate(-50%, 0);
+  font-size: 2rem;
+  /* Scale up to header size */
+  letter-spacing: 0.1em;
 }
+
+/* Removed .modal-content h2 and keyframes as we use floating-title now */
 
 .modal-overlay::before {
   content: '';

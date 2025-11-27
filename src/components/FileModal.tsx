@@ -56,12 +56,18 @@ const FileModal: React.FC<ModalProps> = ({ isOpen, folderName, files, onClose, o
                 style={style}
             >
                 <div className={`folder-cover ${showContent ? 'open' : ''}`}>
-                    <div className="folder-name">{folderName.replace(/_/g, ' ')}</div>
+                    {/* Folder name removed from here to prevent rotation */}
+                </div>
+
+                {/* Floating Title Animation */}
+                <div className={`floating-title ${showContent ? 'animate-to-header' : ''}`}>
+                    {folderName.replace(/_/g, ' ')}
                 </div>
 
                 <div className={`modal-inner-content ${showContent ? 'visible' : ''}`}>
                     <button className="close-modal" onClick={onClose}>&times;</button>
-                    <h2>{folderName.replace(/_/g, ' ')}</h2>
+                    {/* h2 removed as floating-title takes its place */}
+                    <div style={{ height: '2rem', marginBottom: '2rem' }}></div>
 
                     <div className="file-grid">
                         {files.map((file, index) => (

@@ -68,7 +68,10 @@ function App() {
     // Load Config
     fetch(`/My-website/config.json?t=${Date.now()}`)
       .then(res => res.json())
-      .then(data => setConfig(data))
+      .then(data => {
+        console.log("Loaded config:", data);
+        setConfig(data);
+      })
       .catch(err => console.error("Failed to load config:", err));
   }, []);
 
