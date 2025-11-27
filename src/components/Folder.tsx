@@ -9,7 +9,7 @@ interface FileData {
 interface FolderProps {
     name: string;
     files: FileData[];
-    onClick: () => void;
+    onClick: (e: React.MouseEvent) => void;
 }
 
 const Folder: React.FC<FolderProps> = ({ name, files, onClick }) => {

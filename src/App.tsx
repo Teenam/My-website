@@ -27,6 +27,7 @@ function App() {
   const [folders, setFolders] = useState<FolderData[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<FolderData | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [originRect, setOriginRect] = useState<DOMRect | null>(null);
   const [config, setConfig] = useState<ConfigData>({
     title: "PORTFOLIO",
     subtitle: "COLLECTION 2025",
@@ -71,7 +72,9 @@ function App() {
       .catch(err => console.error("Failed to load config:", err));
   }, []);
 
-  const handleFolderClick = (folder: FolderData) => {
+  const handleFolderClick = (folder: FolderData, e: React.MouseEvent) => {
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setOriginRect(rect);
     setSelectedFolder(folder);
     setIsModalOpen(true);
   };
@@ -117,6 +120,7 @@ function App() {
           folderName={selectedFolder.name}
           files={selectedFolder.files}
           onClose={handleCloseModal}
+          originRect={originRect}
         />
       )}
     </>
