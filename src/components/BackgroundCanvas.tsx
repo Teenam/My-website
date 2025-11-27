@@ -21,21 +21,23 @@ const Sphere = ({ position, scale, speed, phase }: { position: [number, number, 
             <mesh ref={meshRef} position={position} scale={scale}>
                 <sphereGeometry args={[1.5, 32, 32]} /> {/* Lower poly for performance */}
                 <MeshTransmissionMaterial
-                    backside
-                    samples={4} // Lower samples for performance
-                    resolution={512} // Lower resolution
+                    backside={false}
+                    samples={2}
+                    resolution={256}
+                    transmission={1}
                     thickness={3}
-                    chromaticAberration={0.5} // High for rainbow effect
-                    anisotropy={0.5}
-                    distortion={0.5}
-                    distortionScale={0.5}
-                    temporalDistortion={0.2}
+                    chromaticAberration={0.3}
+                    anisotropy={0.3}
+                    distortion={0.2}
+                    distortionScale={0.2}
+                    temporalDistortion={0.1}
                     iridescence={1}
-                    iridescenceIOR={1.8} // Higher IOR for stronger effect
+                    iridescenceIOR={1.5}
                     iridescenceThicknessRange={[0, 1400]}
                     roughness={0.1}
                     clearcoat={1}
                     color="#ffffff"
+                    envMapIntensity={1}
                 />
             </mesh>
         </Float>
