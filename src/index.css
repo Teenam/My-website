@@ -388,7 +388,7 @@ footer p {
 }
 
 .modal-content {
-  background: rgba(10, 10, 15, 0.4);
+  background: rgba(10, 10, 15, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 3rem;
   width: 90%;
@@ -401,8 +401,8 @@ footer p {
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   border-radius: 30px;
   cursor: default;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .modal-overlay.active .modal-content {

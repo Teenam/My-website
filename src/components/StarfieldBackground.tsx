@@ -13,15 +13,15 @@ const WhiteSphere: React.FC = () => {
             meshRef.current.rotation.y = state.clock.elapsedTime * 0.2;
             meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
 
-            // Wandering movement
-            meshRef.current.position.x = Math.sin(state.clock.elapsedTime * 0.5) * 2;
-            meshRef.current.position.y = Math.cos(state.clock.elapsedTime * 0.3) * 1.5;
+            // Constrained wandering movement (stays on right side)
+            meshRef.current.position.x = 3 + Math.sin(state.clock.elapsedTime * 0.5) * 1.5;
+            meshRef.current.position.y = Math.cos(state.clock.elapsedTime * 0.3) * 1.2;
         }
     });
 
     return (
         <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.4}>
-            <mesh ref={meshRef} position={[0, 0, 0]}>
+            <mesh ref={meshRef} position={[3, 0, 0]}>
                 <icosahedronGeometry args={[0.8, 2]} />
                 <meshStandardMaterial
                     color="#ffffff"

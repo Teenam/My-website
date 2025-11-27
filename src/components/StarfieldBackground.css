@@ -18,12 +18,11 @@
 }
 
 .holographic-container {
-    position: absolute;
-    top: 50%;
-    right: 10%;
-    width: 400px;
-    height: 400px;
-    transform: translateY(-50%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     pointer-events: none;
     overflow: visible;
 }
