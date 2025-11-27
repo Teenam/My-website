@@ -20,6 +20,8 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
     const [velocity, setVelocity] = useState(0);
     const requestRef = useRef<number | undefined>(undefined);
     const lastTimeRef = useRef<number | undefined>(undefined);
+    const lastYRef = useRef<number>(0);
+    const lastTimeStampRef = useRef<number>(0);
 
     const radius = 400; // Radius of the wheel
     const angleStep = 360 / folders.length;
@@ -43,12 +45,32 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
         };
     }, [isDragging, velocity]);
 
+    // Handle wheel/trackpad scroll
+    const handleWheel = (e: WheelEvent) => {
+        e.preventDefault();
+        const delta = e.deltaY * 0.2; // Sensitivity for scroll
+        setRotation(prev => prev + delta);
+        setVelocity(delta * 0.1); // Add some inertia
+    };
+
+    useEffect(() => {
+        const container = containerRef.current;
+        if (container) {
+            container.addEventListener('wheel', handleWheel, { passive: false });
+            return () => {
+                container.removeEventListener('wheel', handleWheel);
+            };
+        }
+    }, []);
+
     const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
         setIsDragging(true);
         const y = 'touches' in e ? e.touches[0].clientY : e.clientY;
         setStartY(y);
         setStartRotation(rotation);
         setVelocity(0);
+        lastYRef.current = y;
+        lastTimeStampRef.current = Date.now();
     };
 
     const handleMouseMove = (e: MouseEvent | TouchEvent) => {
@@ -57,21 +79,29 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
         const deltaY = y - startY;
         const deltaRotation = deltaY * 0.5; // Sensitivity
         setRotation(startRotation + deltaRotation);
+
+        // Update for velocity calculation
+        lastYRef.current = y;
+        lastTimeStampRef.current = Date.now();
     };
 
     const handleMouseUp = (e: MouseEvent | TouchEvent) => {
         if (!isDragging) return;
         setIsDragging(false);
         const y = 'touches' in e ? e.changedTouches[0].clientY : e.clientY;
-        const deltaY = y - startY;
-        setVelocity(deltaY * 0.05); // Initial velocity based on drag
+        const deltaY = y - lastYRef.current;
+        const deltaTime = Date.now() - lastTimeStampRef.current;
+
+        // Calculate velocity based on the last movement (flick)
+        const speed = deltaTime > 0 ? (deltaY / deltaTime) * 10 : 0;
+        setVelocity(speed * 0.5);
     };
 
     useEffect(() => {
         if (isDragging) {
             window.addEventListener('mousemove', handleMouseMove);
             window.addEventListener('mouseup', handleMouseUp);
-            window.addEventListener('touchmove', handleMouseMove);
+            window.addEventListener('touchmove', handleMouseMove, { passive: false });
             window.addEventListener('touchend', handleMouseUp);
         } else {
             window.removeEventListener('mousemove', handleMouseMove);

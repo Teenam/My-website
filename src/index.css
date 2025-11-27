@@ -1028,6 +1028,17 @@ footer p {
   align-items: center;
   z-index: 10;
   cursor: grab;
+
+  /* Hide scrollbars */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.carousel-container::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
 }
 
 .carousel-container:active {
@@ -1061,8 +1072,9 @@ footer p {
 /* View Toggle Button */
 .view-toggle {
   position: fixed;
-  bottom: 2rem;
+  top: 50%;
   right: 2rem;
+  transform: translateY(-50%);
   z-index: 100;
   background: rgba(10, 10, 15, 0.6);
   backdrop-filter: blur(20px);
@@ -1080,13 +1092,24 @@ footer p {
 }
 
 .view-toggle:hover {
-  transform: scale(1.1);
+  transform: translateY(-50%) scale(1.1);
   background: rgba(255, 255, 255, 0.1);
 }
 
 @media (max-width: 768px) {
   .view-toggle {
-    bottom: 6rem;
-    /* Move up to avoid footer overlap if footer is fixed/sticky, or just spacing */
+    top: auto;
+    bottom: 2rem;
+    right: 50%;
+    transform: translateX(50%);
   }
+
+  .view-toggle:hover {
+    transform: translateX(50%) scale(1.1);
+  }
+}
+
+/* Prevent body scroll when carousel is active */
+body.carousel-active {
+  overflow: hidden;
 }

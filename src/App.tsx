@@ -76,6 +76,18 @@ function App() {
       .catch(err => console.error("Failed to load config:", err));
   }, []);
 
+  // Prevent body scroll when carousel is active
+  useEffect(() => {
+    if (viewMode === 'carousel') {
+      document.body.classList.add('carousel-active');
+    } else {
+      document.body.classList.remove('carousel-active');
+    }
+    return () => {
+      document.body.classList.remove('carousel-active');
+    };
+  }, [viewMode]);
+
   const handleFolderClick = (folderName: string, rect: DOMRect) => {
     setOriginRect(rect);
     setSelectedFolder(folderName);

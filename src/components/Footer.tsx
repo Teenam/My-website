@@ -19,7 +19,7 @@ const Footer: React.FC<FooterProps> = ({ socials, version }) => {
                         <a key={index} href={social.link}><i className={social.icon}></i></a>
                     ))}
                 </div>
-                <p>&copy; 2025 Teenam. All Rights Reserved. <span style={{ opacity: 0.5, marginLeft: '10px' }}>{version}</span></p>
+                <p>&copy; 2025 Teenam. All Rights <span style={{ opacity: 0.5, marginLeft: '10px' }}>{version}</span></p>
             </div>
         </footer>
     );
