@@ -1,0 +1,333 @@
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+  --text-color: #ffffff;
+  --font-heading: 'Bodoni Moda', serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background: #000;
+  color: var(--text-color);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Typography */
+h1 {
+  font-family: var(--font-heading);
+  font-size: 5rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0;
+  line-height: 1;
+  text-align: center;
+}
+
+/* Header */
+header {
+  padding: 4rem 2rem;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.decorative-bar {
+  width: 60px;
+  height: 4px;
+  background: #fff;
+  margin: 1rem 0;
+}
+
+.subtitle {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+/* Folders Grid */
+.folders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 4rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  perspective: 1000px;
+}
+
+/* Liquid Glass Folder Container */
+.folder-card {
+  width: 220px;
+  height: 180px;
+  margin: 0 auto;
+  position: relative;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+/* Common Glass Style */
+.glass-panel {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Folder Back Plate */
+.folder-back {
+  z-index: 1;
+  transform: translateZ(-10px);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Folder Front Plate (The Cover) */
+.folder-front {
+  z-index: 10;
+  transform-origin: bottom;
+  transform: rotateX(0deg);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.folder-front::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  width: 40%;
+  height: 10px;
+  background: inherit;
+  border-radius: 12px 12px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.folder-name {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+/* Content Preview */
+.folder-preview-items {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  z-index: 5;
+  transform: translateZ(-5px);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow: hidden;
+}
+
+.preview-item {
+  height: 33%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transform: translateY(20px);
+  transition: transform 0.5s ease;
+  opacity: 0.7;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Hover Effects */
+.folder-card:hover .folder-front {
+  transform: rotateX(-30deg) translateY(10px);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.folder-card:hover .preview-item {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.folder-card:hover .preview-item:nth-child(2) {
+  transition-delay: 0.05s;
+}
+
+.folder-card:hover .preview-item:nth-child(3) {
+  transition-delay: 0.1s;
+}
+
+/* Footer */
+footer {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  min-width: 300px;
+  padding: 1rem 2rem;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.socials {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.socials a {
+  color: #fff;
+  font-size: 1.1rem;
+  opacity: 0.7;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.socials a:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+footer p {
+  font-size: 0.75rem;
+  opacity: 0.5;
+  letter-spacing: 0.05em;
+  margin: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  padding-left: 1.5rem;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px);
+  z-index: 200;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem;
+  width: 90%;
+  height: 90%;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+  transform: scale(0.95);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.modal-overlay.active .modal-content {
+  transform: scale(1);
+}
+
+.close-modal {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #fff;
+  opacity: 0.5;
+  transition: all 0.3s;
+  background: none;
+  border: none;
+}
+
+.close-modal:hover {
+  opacity: 1;
+  transform: rotate(90deg);
+}
+
+.file-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.file-item {
+  background: rgba(255, 255, 255, 0.02);
+  transition: transform 0.3s ease;
+}
+
+.file-item:hover {
+  transform: scale(1.02);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.file-item img,
+.file-item video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.file-name {
+  padding: 1rem;
+  font-size: 0.9rem;
+  opacity: 0.7;
+  text-align: center;
+}

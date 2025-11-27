@@ -1,61 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liquid Glass Portfolio</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;700&family=Inter:wght@300;400;500&display=swap"
-        rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Liquid Glass Portfolio</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;700&family=Inter:wght@300;400;500&display=swap"
+    rel="stylesheet">
 </head>
 
 <body>
-    <div id="canvas-container"></div>
-
-    <header>
-        <div class="header-content">
-            <h1>PORTFOLIO</h1>
-            <div class="decorative-bar"></div>
-            <p class="subtitle">COLLECTION 2025</p>
-        </div>
-    </header>
-
-    <main>
-        <div class="folders-grid">
-            <!-- Folders will be injected here by JS -->
-            <p style="text-align: center; width: 100%;">Loading content...</p>
-        </div>
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <div class="socials">
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="far fa-envelope"></i></a>
-            </div>
-            <p>&copy; 2025 Liquid Glass. All Rights Reserved.</p>
-        </div>
-    </footer>
-
-    <!-- Modal for viewing files -->
-    <div id="file-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2 id="modal-title">Folder Name</h2>
-            <div id="modal-grid" class="file-grid">
-                <!-- Files will be injected here -->
-            </div>
-        </div>
-    </div>
-
-    <script src="js/main.js"></script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 
 </html>
