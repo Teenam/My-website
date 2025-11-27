@@ -66,7 +66,7 @@ function App() {
       .catch(err => console.error("Failed to load content:", err));
 
     // Load Config
-    fetch('/My-website/config.json')
+    fetch(`/My-website/config.json?t=${Date.now()}`)
       .then(res => res.json())
       .then(data => setConfig(data))
       .catch(err => console.error("Failed to load config:", err));
