@@ -1,0 +1,12 @@
+{
+  "name": "liquid-glass-portfolio",
+  "version": "1.0.0",
+  "description": "Interactive Liquid Glass Portfolio",
+  "main": "index.html",
+  "scripts": {
+    "build-content": "node scripts/generate_content.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

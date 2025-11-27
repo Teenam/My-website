@@ -1,30 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Liquid Glass Portfolio</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
+
 <body>
-    
+    <div id="canvas-container"></div>
+
     <header>
-        <div class="banner">
-            <h1>My Image Gallery</h1>
-        </div>
+        <h1>My Portfolio</h1>
     </header>
+
     <main>
-        <div class="folders">
-            <div class="folder" data-year="2020"><i class="fas fa-folder"></i> 2020</div>
-            <div class="folder" data-year="2021"><i class="fas fa-folder"></i> 2021</div>
-            <div class="folder" data-year="2022"><i class="fas fa-folder"></i> 2022</div>
-            <div class="folder" data-year="2023"><i class="fas fa-folder"></i> 2023</div>
-            <div class="folder" data-year="2024"><i class="fas fa-folder"></i> 2024</div>
+        <div class="folders-grid">
+            <!-- Folders will be injected here by JS -->
+            <p style="text-align: center; width: 100%;">Loading content...</p>
         </div>
-        <div id="images-container"></div>
-        <button id="to-top"><i class="fas fa-arrow-up"></i></button>
     </main>
-    <script src="js/script.js"></script>
+
+    <!-- Modal for viewing files -->
+    <div id="file-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modal-title"
+                style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+                Folder Name</h2>
+            <div id="modal-grid" class="file-grid">
+                <!-- Files will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
 </body>
+
 </html>
