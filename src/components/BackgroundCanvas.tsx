@@ -47,7 +47,7 @@ const Sphere = ({ position, scale, speed, phase }: { position: [number, number, 
 const BackgroundCanvas = () => {
     // Generate random spheres
     const spheres = useMemo(() => {
-        return Array.from({ length: 15 }).map(() => ({
+        return Array.from({ length: 8 }).map(() => ({
             position: [
                 (Math.random() - 0.5) * 35,
                 (Math.random() - 0.5) * 35,

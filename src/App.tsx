@@ -36,7 +36,7 @@ function App() {
 
   useEffect(() => {
     // Load Content
-    fetch('/content.json')
+    fetch('/My-website/content.json')
       .then(res => res.json())
       .then(data => {
         // Transform the legacy data format if necessary
@@ -56,7 +56,7 @@ function App() {
             return {
               name: file,
               type,
-              url: `/content/${folder.name}/${file}`
+              url: `/My-website/content/${folder.name}/${file}`
             };
           })
         }));
@@ -65,7 +65,7 @@ function App() {
       .catch(err => console.error("Failed to load content:", err));
 
     // Load Config
-    fetch('/config.json')
+    fetch('/My-website/config.json')
       .then(res => res.json())
       .then(data => setConfig(data))
       .catch(err => console.error("Failed to load config:", err));
