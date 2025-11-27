@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import BackgroundCanvas from './components/BackgroundCanvas';
+import CSSBackground from './components/CSSBackground';
 import FolderGrid from './components/FolderGrid';
 import Footer from './components/Footer';
 import FileModal from './components/FileModal';
@@ -83,7 +83,7 @@ function App() {
 
   return (
     <>
-      <BackgroundCanvas />
+      <CSSBackground />
 
       <main style={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <header>

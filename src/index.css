@@ -123,6 +123,8 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 0 20px 20px 20px;
+  /* Top-left sharp for tab connection */
 }
 
 .folder-front::before {
