@@ -1,14 +1,25 @@
+```typescript
 import React, { useEffect, useRef } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { MeshTransmissionMaterial, Float, Environment } from '@react-three/drei';
+import * as THREE from 'three';
 import './StarfieldBackground.css';
 
 // Single holographic 3D object
 const HolographicSphere: React.FC = () => {
+    const meshRef = useRef<THREE.Mesh>(null);
+
+    useFrame((state) => {
+        if (meshRef.current) {
+            meshRef.current.rotation.y = state.clock.elapsedTime * 0.2;
+            meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
+        }
+    });
+
     return (
         <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.4}>
-            <mesh position={[3, 0, 0]}>
-                <icosahedronGeometry args={[1.2, 1]} />
+            <mesh ref={meshRef} position={[0, 0, 0]}>
+                <icosahedronGeometry args={[1.5, 1]} />
                 <MeshTransmissionMaterial
                     backside={false}
                     samples={3}
@@ -75,7 +86,7 @@ const StarfieldBackground: React.FC = () => {
                     star.twinkleSpeed *= -1;
                 }
 
-                ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0, Math.min(1, star.opacity))})`;
+                ctx.fillStyle = `rgba(255, 255, 255, ${ Math.max(0, Math.min(1, star.opacity)) })`;
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
                 ctx.fill();
