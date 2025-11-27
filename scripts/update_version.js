@@ -9,22 +9,36 @@ const __dirname = path.dirname(__filename);
 const configPath = path.join(__dirname, '../public/config.json');
 
 // Get commit count
-const commitCount = execSync('git rev-list --count HEAD', { encoding: 'utf-8' }).trim();
+let commitCount = '0';
+try {
+    commitCount = execSync('git rev-list --count HEAD', { encoding: 'utf-8' }).trim();
+} catch (error) {
+    console.warn('⚠️ Could not get git commit count, defaulting to 0');
+}
 
 // Calculate version based on commits
 // v1.0.0 starts at commit 1
 // Every 10 commits = minor version bump
 // Every 100 commits = major version bump
-const major = Math.floor(parseInt(commitCount) / 100) + 1;
-const minor = Math.floor((parseInt(commitCount) % 100) / 10);
-const patch = parseInt(commitCount) % 10;
+const count = parseInt(commitCount) || 0;
+const major = Math.floor(count / 100) + 1;
+const minor = Math.floor((count % 100) / 10);
+const patch = count % 10;
 
 const version = `v${major}.${minor}.${patch}`;
 
 // Read and update config
-const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+let config = {};
+try {
+    if (fs.existsSync(configPath)) {
+        config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+    }
+} catch (e) {
+    console.warn('⚠️ Could not read config.json, creating new one');
+}
+
 config.version = version;
 
 fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
 
-console.log(`✅ Updated version to ${version} (${commitCount} commits)`);
+console.log(`✅ Updated version to ${version} (${count} commits)`);

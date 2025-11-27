@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { execSync } from 'child_process'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -8,7 +9,6 @@ export default defineConfig({
     {
       name: 'auto-version',
       buildStart() {
-        const { execSync } = require('child_process');
         try {
           execSync('node scripts/update_version.js', { stdio: 'inherit' });
         } catch (error) {
