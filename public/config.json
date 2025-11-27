@@ -1,19 +1,19 @@
 {
-    "title": "PORTFOLIO",
-    "subtitle": "COLLECTION 2025",
-    "version": "v1.1.0",
-    "socials": [
-        {
-            "icon": "fab fa-instagram",
-            "link": "#"
-        },
-        {
-            "icon": "fab fa-twitter",
-            "link": "#"
-        },
-        {
-            "icon": "far fa-envelope",
-            "link": "#"
-        }
-    ]
+  "title": "PORTFOLIO",
+  "subtitle": "COLLECTION 2025",
+  "version": "v1.2.3",
+  "socials": [
+    {
+      "icon": "fab fa-instagram",
+      "link": "#"
+    },
+    {
+      "icon": "fab fa-twitter",
+      "link": "#"
+    },
+    {
+      "icon": "far fa-envelope",
+      "link": "#"
+    }
+  ]
 }

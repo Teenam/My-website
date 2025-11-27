@@ -110,8 +110,8 @@ header {
 
 /* Liquid Glass Folder Container */
 .folder-card {
-  width: 220px;
-  height: 180px;
+  width: 180px;
+  height: 140px;
   position: relative;
   transform-style: preserve-3d;
   cursor: pointer;
@@ -388,7 +388,7 @@ footer p {
 }
 
 .modal-content {
-  background: rgba(10, 10, 15, 0.85);
+  background: rgba(10, 10, 15, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 3rem;
   width: 90%;
@@ -401,6 +401,8 @@ footer p {
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   border-radius: 30px;
   cursor: default;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .modal-overlay.active .modal-content {
@@ -415,24 +417,7 @@ footer p {
 }
 
 .close-modal {
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-  font-size: 2.5rem;
-  cursor: pointer;
-  color: #fff;
-  opacity: 0.4;
-  transition: all 0.3s;
-  background: none;
-  border: none;
-  user-select: none;
-  font-weight: 300;
-}
-
-.close-modal:hover {
-  opacity: 1;
-  transform: rotate(90deg) scale(1.1);
-  color: #ff6b6b;
+  display: none;
 }
 
 .file-grid {
