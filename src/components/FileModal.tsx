@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
+import CustomVideoPlayer from './CustomVideoPlayer';
+import CustomAudioPlayer from './CustomAudioPlayer';
 
 interface FileData {
     name: string;
@@ -68,19 +70,10 @@ const FileModal: React.FC<ModalProps> = ({ isOpen, folderName, files, onClose, o
                                     <img src={file.url} alt={file.name} loading="lazy" />
                                 )}
                                 {file.type === 'video' && (
-                                    <video controls>
-                                        <source src={file.url} />
-                                        Your browser does not support the video tag.
-                                    </video>
+                                    <CustomVideoPlayer src={file.url} />
                                 )}
                                 {file.type === 'audio' && (
-                                    <div className="file-icon-card">
-                                        <i className="fas fa-music" style={{ fontSize: '4rem', marginBottom: '1rem' }}></i>
-                                        <audio controls style={{ width: '90%' }}>
-                                            <source src={file.url} />
-                                        </audio>
-                                        <div className="file-name">{file.name}</div>
-                                    </div>
+                                    <CustomAudioPlayer src={file.url} name={file.name} />
                                 )}
                                 {file.type === 'other' && (
                                     <a href={file.url} target="_blank" rel="noopener noreferrer" className="file-icon-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem', color: 'white', textDecoration: 'none' }}>
@@ -88,7 +81,7 @@ const FileModal: React.FC<ModalProps> = ({ isOpen, folderName, files, onClose, o
                                         <div className="file-name">{file.name}</div>
                                     </a>
                                 )}
-                                {(file.type === 'image' || file.type === 'video') && (
+                                {(file.type === 'image') && (
                                     <div className="file-name">{file.name}</div>
                                 )}
                             </div>
