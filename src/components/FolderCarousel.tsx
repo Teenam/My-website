@@ -26,6 +26,8 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
     const radius = 400; // Radius of the wheel
     const angleStep = 360 / folders.length;
 
+    const lastVelocityRef = useRef<number>(0);
+
     // Inertia animation
     const animate = (time: number) => {
         if (lastTimeRef.current !== undefined) {
@@ -48,10 +50,10 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
     // Handle wheel/trackpad scroll
     const handleWheel = (e: WheelEvent) => {
         e.preventDefault();
-        // Reversed direction: negative delta moves forward (up)
-        const delta = -e.deltaY * 0.2;
+        // Desktop: Positive delta moves forward (down/right) - Reverted to original
+        const delta = e.deltaY * 0.2;
         setRotation(prev => prev + delta);
-        setVelocity(delta * 0.15); // Increased inertia slightly
+        setVelocity(delta * 0.1);
     };
 
     useEffect(() => {
@@ -72,32 +74,41 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
         setVelocity(0);
         lastYRef.current = y;
         lastTimeStampRef.current = Date.now();
+        lastVelocityRef.current = 0;
     };
 
     const handleMouseMove = (e: MouseEvent | TouchEvent) => {
         if (!isDragging) return;
         const y = 'touches' in e ? e.touches[0].clientY : e.clientY;
         const deltaY = y - startY;
-        // Reversed direction for drag: dragging up (negative deltaY) should rotate forward (positive rotation)
+
+        // Mobile/Drag: Dragging UP (negative deltaY) -> Rotate Forward (positive rotation)
         const deltaRotation = -deltaY * 0.5;
         setRotation(startRotation + deltaRotation);
 
-        // Update for velocity calculation
+        // Calculate instantaneous velocity
+        const now = Date.now();
+        const timeDiff = now - lastTimeStampRef.current;
+        const distDiff = y - lastYRef.current;
+
+        if (timeDiff > 0) {
+            // Calculate velocity: distance / time
+            // Reversed direction for drag velocity too
+            const v = (-distDiff / timeDiff) * 15;
+            lastVelocityRef.current = v;
+        }
+
         lastYRef.current = y;
-        lastTimeStampRef.current = Date.now();
+        lastTimeStampRef.current = now;
     };
 
-    const handleMouseUp = (e: MouseEvent | TouchEvent) => {
+    const handleMouseUp = () => {
         if (!isDragging) return;
         setIsDragging(false);
-        const y = 'touches' in e ? e.changedTouches[0].clientY : e.clientY;
-        const deltaY = y - lastYRef.current;
-        const deltaTime = Date.now() - lastTimeStampRef.current;
 
-        // Calculate velocity based on the last movement (flick)
-        // Reversed direction for flick
-        const speed = deltaTime > 0 ? (-deltaY / deltaTime) * 15 : 0; // Increased multiplier for more momentum
-        setVelocity(speed * 0.8); // Increased retention
+        // Apply the last calculated velocity from movement
+        // This prevents the "stop on lift" issue if the user pauses briefly
+        setVelocity(lastVelocityRef.current * 0.8);
     };
 
     useEffect(() => {

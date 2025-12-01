@@ -56,8 +56,8 @@ header h1 {
   animation: titleGlow 4s ease-in-out infinite alternate;
   width: 100%;
   text-align: center;
-  word-break: break-word;
-  /* Prevent overflow */
+  white-space: nowrap;
+  /* Prevent wrapping */
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -559,6 +559,16 @@ footer p {
   display: none;
 }
 
+.close-modal:hover {
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+.mobile-back-arrow {
+  display: none !important;
+  /* Force hidden on desktop */
+}
+
 .file-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -1027,7 +1037,8 @@ footer p {
 
   /* Show back arrow on mobile */
   .mobile-back-arrow {
-    display: flex;
+    display: flex !important;
+    /* Force show on mobile */
     position: absolute;
     top: 2rem;
     left: 1.5rem;
