@@ -3,15 +3,16 @@ import Header from './components/Header';
 import FolderGrid from './components/FolderGrid';
 import FolderCarousel from './components/FolderCarousel';
 import FileModal from './components/FileModal';
-import Footer from './components/Footer';
+// import Footer from './components/Footer'; // Removed
 import StarfieldBackground from './components/StarfieldBackground';
 import './App.css';
 
 interface FileData {
   name: string;
-  type: 'image' | 'video' | 'audio' | 'other';
+  type: 'image' | 'video' | 'audio' | 'other' | 'social';
   url: string;
 }
+
 
 interface FolderData {
   name: string;
@@ -115,6 +116,25 @@ function App() {
     ? content.folders.find(f => f.name === selectedFolder)?.files || []
     : [];
 
+
+  // Inject Socials Folder
+  const displayFolders = [...content.folders];
+  if (config.socials && config.socials.length > 0) {
+    displayFolders.push({
+      name: "Socials",
+      files: config.socials.map(social => ({
+        name: social.icon, // Store icon class in name
+        type: 'social',
+        url: social.link
+      }))
+    });
+  }
+
+  // If selected folder is Socials, use the generated files
+  const modalFiles = selectedFolder === "Socials"
+    ? displayFolders.find(f => f.name === "Socials")?.files || []
+    : currentFolderFiles;
+
   return (
     <div className="app">
       <StarfieldBackground />
@@ -135,28 +155,26 @@ function App() {
 
       {viewMode === 'grid' ? (
         <FolderGrid
-          folders={content.folders}
+          folders={displayFolders}
           onFolderClick={handleFolderClick}
         />
       ) : (
         <FolderCarousel
-          folders={content.folders}
+          folders={displayFolders}
           onFolderClick={handleFolderClick}
         />
       )}
 
+
       <FileModal
         isOpen={!!selectedFolder}
         folderName={selectedFolder || ''}
-        files={currentFolderFiles}
+        files={modalFiles}
         onClose={handleCloseModal}
         originRect={originRect}
       />
 
-      <Footer
-        socials={config.socials}
-        version={config.version}
-      />
+      {/* Footer Removed */}
     </div>
   );
 }

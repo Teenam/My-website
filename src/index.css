@@ -32,7 +32,12 @@ body {
   overscroll-behavior-y: none;
   /* Prevent bounce/stutter */
   min-height: 100vh;
+  min-height: 100dvh;
   line-height: 1.6;
+}
+
+html {
+  overscroll-behavior-y: none;
 }
 
 /* Typography */
@@ -47,7 +52,7 @@ h3 {
 h1,
 header h1 {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 10vw, 6rem);
+  font-size: clamp(1.8rem, 8vw, 5rem);
   /* Dynamic sizing */
   font-weight: 400;
   letter-spacing: 0.2em;
@@ -122,8 +127,8 @@ header {
 
 /* Liquid Glass Folder Container */
 .folder-card {
-  width: 180px;
-  height: 140px;
+  width: clamp(140px, 20vw, 180px);
+  height: clamp(110px, 16vw, 140px);
   position: relative;
   transform-style: preserve-3d;
   cursor: pointer;
@@ -489,9 +494,6 @@ footer p {
   z-index: 201;
 }
 
-.modal-content.expanded {
-  /* Final state is defined in .modal-content */
-}
 
 .modal-inner-content {
   padding: 3rem;
@@ -544,9 +546,6 @@ footer p {
   opacity: 0;
 }
 
-.modal-overlay.active .modal-content {
-  /* transform is handled by JS/CSS transition */
-}
 
 .modal-content h2 {
   font-family: var(--font-display);
@@ -1059,6 +1058,7 @@ footer p {
   left: 0;
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   perspective: 1000px;
   overflow: hidden;
   display: flex;
@@ -1096,12 +1096,12 @@ footer p {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 180px;
+  width: clamp(140px, 20vw, 180px);
   /* Match folder width */
-  height: 140px;
+  height: clamp(110px, 16vw, 140px);
   /* Match folder height */
-  margin-top: -70px;
-  margin-left: -90px;
+  margin-top: calc(clamp(110px, 16vw, 140px) * -0.5);
+  margin-left: calc(clamp(140px, 20vw, 180px) * -0.5);
   transform-style: preserve-3d;
   backface-visibility: hidden;
   /* Hide items on the back side if desired, or keep visible */
@@ -1150,9 +1150,5 @@ footer p {
 /* Prevent body scroll when carousel is active */
 body.carousel-active {
   overflow: hidden;
-}
-
-/* Hide footer when carousel is active */
-body.carousel-active footer {
-  display: none;
+  overscroll-behavior: contain;
 }

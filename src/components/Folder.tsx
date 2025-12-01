@@ -2,9 +2,10 @@ import React from 'react';
 
 interface FileData {
     name: string;
-    type: 'image' | 'video' | 'audio' | 'other';
+    type: 'image' | 'video' | 'audio' | 'other' | 'social';
     url: string;
 }
+
 
 interface FolderProps {
     name: string;
@@ -31,8 +32,11 @@ const Folder: React.FC<FolderProps> = ({ name, files, onClick }) => {
                             justifyContent: 'center'
                         }}
                     >
-                        {file.type !== 'image' && (
+                        {file.type !== 'image' && file.type !== 'social' && (
                             <span style={{ fontSize: '1.5rem', opacity: 0.5 }}>📄</span>
+                        )}
+                        {file.type === 'social' && (
+                            <i className={file.name} style={{ fontSize: '1.5rem', color: 'rgba(255,255,255,0.8)' }}></i>
                         )}
                     </div>
                 ))}

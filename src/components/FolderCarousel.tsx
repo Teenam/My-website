@@ -23,7 +23,18 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
     const lastYRef = useRef<number>(0);
     const lastTimeStampRef = useRef<number>(0);
 
-    const radius = 400; // Radius of the wheel
+    const [radius, setRadius] = useState(400);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setRadius(window.innerWidth < 768 ? 250 : 400);
+        };
+        handleResize(); // Set initial
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // const radius = 400; // Radius of the wheel
     const angleStep = 360 / folders.length;
 
     const lastVelocityRef = useRef<number>(0);

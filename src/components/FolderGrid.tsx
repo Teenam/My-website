@@ -3,9 +3,10 @@ import Folder from './Folder';
 
 interface FileData {
     name: string;
-    type: 'image' | 'video' | 'audio' | 'other';
+    type: 'image' | 'video' | 'audio' | 'other' | 'social';
     url: string;
 }
+
 
 interface FolderData {
     name: string;

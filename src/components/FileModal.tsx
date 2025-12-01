@@ -4,9 +4,10 @@ import CustomAudioPlayer from './CustomAudioPlayer';
 
 interface FileData {
     name: string;
-    type: 'image' | 'video' | 'audio' | 'other';
+    type: 'image' | 'video' | 'audio' | 'other' | 'social';
     url: string;
 }
+
 
 interface ModalProps {
     isOpen: boolean;
@@ -91,6 +92,14 @@ const FileModal: React.FC<ModalProps> = ({ isOpen, folderName, files, onClose, o
                                     <a href={file.url} target="_blank" rel="noopener noreferrer" className="file-icon-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem', color: 'white', textDecoration: 'none' }}>
                                         <i className="fas fa-file" style={{ fontSize: '4rem', marginBottom: '1rem' }}></i>
                                         <div className="file-name">{file.name}</div>
+                                    </a>
+                                )}
+                                {file.type === 'social' && (
+                                    <a href={file.url} target="_blank" rel="noopener noreferrer" className="file-icon-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', color: 'white', textDecoration: 'none', transition: 'transform 0.3s' }}>
+                                        <i className={file.name} style={{ fontSize: '5rem', marginBottom: '1rem', filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.3))' }}></i>
+                                        <div className="file-name" style={{ fontSize: '1.2rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                            {file.name.replace('fab fa-', '').replace('fas fa-', '').replace('far fa-', '')}
+                                        </div>
                                     </a>
                                 )}
                                 {(file.type === 'image') && (
