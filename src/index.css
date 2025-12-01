@@ -1134,6 +1134,27 @@ footer p {
   background: rgba(255, 255, 255, 0.1);
 }
 
+/* Animated icon rotation */
+.view-toggle i {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.view-toggle.carousel-mode i {
+  transform: rotate(180deg);
+}
+
+/* View container transitions */
+.view-container {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.view-container.transitioning {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
 @media (max-width: 768px) {
   .view-toggle {
     top: auto;

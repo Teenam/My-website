@@ -168,12 +168,27 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
             <div className="carousel-wheel" style={{ transform: `rotateX(${rotation}deg)` }}>
                 {folders.map((folder, index) => {
                     const angle = index * angleStep;
+
+                    // Calculate depth-based effects
+                    // Normalize angle to 0-360 range
+                    const normalizedAngle = ((angle + rotation) % 360 + 360) % 360;
+                    // 0° = front center, 180° = back center
+                    // Distance from front: 0 at front (0° or 360°), 1 at back (180°)
+                    const distanceFromFront = Math.abs(normalizedAngle - 180) / 180;
+
+                    // Apply fading: front = 1.0, back = 0.3
+                    const opacity = 1 - (distanceFromFront * 0.7);
+                    // Apply brightness: front = 1.0, back = 0.4
+                    const brightness = 1 - (distanceFromFront * 0.6);
+
                     return (
                         <div
                             key={index}
                             className="carousel-item"
                             style={{
-                                transform: `rotateX(${-angle}deg) translateZ(${radius}px)`
+                                transform: `rotateX(${-angle}deg) translateZ(${radius}px) rotateX(${-rotation}deg)`,
+                                opacity: opacity,
+                                filter: `brightness(${brightness})`
                             }}
                         >
                             <Folder

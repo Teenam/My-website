@@ -35,6 +35,7 @@ function App() {
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [originRect, setOriginRect] = useState<DOMRect | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'carousel'>('grid');
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [config, setConfig] = useState<ConfigData>({
     title: "PORTFOLIO",
     subtitle: "COLLECTION 2025",
@@ -146,24 +147,32 @@ function App() {
 
       {/* View Toggle Button */}
       <button
-        className="view-toggle"
-        onClick={() => setViewMode(prev => prev === 'grid' ? 'carousel' : 'grid')}
+        className={`view-toggle ${viewMode === 'carousel' ? 'carousel-mode' : ''}`}
+        onClick={() => {
+          setIsTransitioning(true);
+          setTimeout(() => {
+            setViewMode(prev => prev === 'grid' ? 'carousel' : 'grid');
+            setTimeout(() => setIsTransitioning(false), 50);
+          }, 200);
+        }}
         title={viewMode === 'grid' ? "Switch to Carousel" : "Switch to Grid"}
       >
         <i className={`fas ${viewMode === 'grid' ? 'fa-circle-notch' : 'fa-th-large'}`}></i>
       </button>
 
-      {viewMode === 'grid' ? (
-        <FolderGrid
-          folders={displayFolders}
-          onFolderClick={handleFolderClick}
-        />
-      ) : (
-        <FolderCarousel
-          folders={displayFolders}
-          onFolderClick={handleFolderClick}
-        />
-      )}
+      <div className={`view-container ${isTransitioning ? 'transitioning' : ''} ${viewMode}`}>
+        {viewMode === 'grid' ? (
+          <FolderGrid
+            folders={displayFolders}
+            onFolderClick={handleFolderClick}
+          />
+        ) : (
+          <FolderCarousel
+            folders={displayFolders}
+            onFolderClick={handleFolderClick}
+          />
+        )}
+      </div>
 
 
       <FileModal
