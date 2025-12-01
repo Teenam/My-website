@@ -38,13 +38,18 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
     const angleStep = 360 / folders.length;
 
     const lastVelocityRef = useRef<number>(0);
+    const velocityBufferRef = useRef<number[]>([]);
+    const VELOCITY_BUFFER_SIZE = 5;
 
-    // Inertia animation
+    // Inertia animation with improved smoothing
     const animate = (time: number) => {
         if (lastTimeRef.current !== undefined) {
-            if (!isDragging && Math.abs(velocity) > 0.01) {
+            if (!isDragging && Math.abs(velocity) > 0.05) {
                 setRotation(prev => prev + velocity);
-                setVelocity(prev => prev * 0.95); // Friction
+                setVelocity(prev => prev * 0.96); // Slightly increased friction for smoother feel
+            } else if (!isDragging && Math.abs(velocity) <= 0.05) {
+                // Stop animation when velocity is too low
+                setVelocity(0);
             }
         }
         lastTimeRef.current = time;
@@ -106,7 +111,16 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
             // Calculate velocity: distance / time
             // Reversed direction for drag velocity too
             const v = (-distDiff / timeDiff) * 15;
-            lastVelocityRef.current = v;
+
+            // Add to velocity buffer for averaging
+            velocityBufferRef.current.push(v);
+            if (velocityBufferRef.current.length > VELOCITY_BUFFER_SIZE) {
+                velocityBufferRef.current.shift();
+            }
+
+            // Average velocity over buffer for smoother result
+            const avgVelocity = velocityBufferRef.current.reduce((a, b) => a + b, 0) / velocityBufferRef.current.length;
+            lastVelocityRef.current = avgVelocity;
         }
 
         lastYRef.current = y;
@@ -117,9 +131,11 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
         if (!isDragging) return;
         setIsDragging(false);
 
-        // Apply the last calculated velocity from movement
-        // This prevents the "stop on lift" issue if the user pauses briefly
+        // Apply the averaged velocity from movement buffer
         setVelocity(lastVelocityRef.current * 0.8);
+
+        // Clear velocity buffer for next interaction
+        velocityBufferRef.current = [];
     };
 
     useEffect(() => {

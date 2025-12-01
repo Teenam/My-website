@@ -80,12 +80,30 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({ src, poster }) =>
     };
 
     const toggleFullscreen = () => {
-        if (!document.fullscreenElement) {
-            videoRef.current?.parentElement?.requestFullscreen();
-            setIsFullscreen(true);
+        const video = videoRef.current;
+        if (!video) return;
+
+        // iOS Safari detection and handling
+        const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+
+        if (isIOSSafari) {
+            // iOS uses webkitEnterFullscreen on the video element
+            if ((video as any).webkitEnterFullscreen) {
+                try {
+                    (video as any).webkitEnterFullscreen();
+                } catch (e) {
+                    console.error('iOS fullscreen error:', e);
+                }
+            }
         } else {
-            document.exitFullscreen();
-            setIsFullscreen(false);
+            // Standard Fullscreen API for other browsers
+            if (!document.fullscreenElement) {
+                video.parentElement?.requestFullscreen();
+                setIsFullscreen(true);
+            } else {
+                document.exitFullscreen();
+                setIsFullscreen(false);
+            }
         }
     };
 
