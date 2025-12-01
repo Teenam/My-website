@@ -23,10 +23,14 @@
 }
 
 body {
-  font-family: var(--font-body);
-  background: var(--color-bg);
-  color: var(--color-text);
+  margin: 0;
+  padding: 0;
+  background-color: #050505;
+  color: #ffffff;
+  font-family: var(--font-ui);
   overflow-x: hidden;
+  overscroll-behavior-y: none;
+  /* Prevent bounce/stutter */
   min-height: 100vh;
   line-height: 1.6;
 }
@@ -40,16 +44,24 @@ h3 {
   letter-spacing: 0.1em;
 }
 
-h1 {
-  font-size: 3.5rem;
-  text-transform: uppercase;
-  color: #fff;
-  margin: 0;
+h1,
+header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 10vw, 6rem);
+  /* Dynamic sizing */
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 30px rgba(168, 192, 255, 0.3);
+  animation: titleGlow 4s ease-in-out infinite alternate;
+  width: 100%;
+  text-align: center;
+  word-break: break-word;
+  /* Prevent overflow */
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
   filter: drop-shadow(0 4px 20px rgba(168, 192, 255, 0.4));
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -1012,6 +1024,21 @@ footer p {
   .audio-controls-row {
     width: 100%;
   }
+
+  /* Show back arrow on mobile */
+  .mobile-back-arrow {
+    display: flex;
+    position: absolute;
+    top: 2rem;
+    left: 1.5rem;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 205;
+    padding: 10px;
+  }
 }
 
 /* Vertical Carousel (Big Wheel) */
@@ -1112,4 +1139,9 @@ footer p {
 /* Prevent body scroll when carousel is active */
 body.carousel-active {
   overflow: hidden;
+}
+
+/* Hide footer when carousel is active */
+body.carousel-active footer {
+  display: none;
 }

@@ -66,6 +66,12 @@ const FileModal: React.FC<ModalProps> = ({ isOpen, folderName, files, onClose, o
 
                 <div className={`modal-inner-content ${showContent ? 'visible' : ''}`}>
                     <button className="close-modal" onClick={onClose}>&times;</button>
+
+                    {/* Mobile Back Arrow */}
+                    <button className="mobile-back-arrow" onClick={onClose}>
+                        <i className="fas fa-arrow-left"></i>
+                    </button>
+
                     {/* h2 removed as floating-title takes its place */}
                     <div style={{ height: '2rem', marginBottom: '2rem' }}></div>
 

@@ -48,9 +48,10 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
     // Handle wheel/trackpad scroll
     const handleWheel = (e: WheelEvent) => {
         e.preventDefault();
-        const delta = e.deltaY * 0.2; // Sensitivity for scroll
+        // Reversed direction: negative delta moves forward (up)
+        const delta = -e.deltaY * 0.2;
         setRotation(prev => prev + delta);
-        setVelocity(delta * 0.1); // Add some inertia
+        setVelocity(delta * 0.15); // Increased inertia slightly
     };
 
     useEffect(() => {
@@ -77,7 +78,8 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
         if (!isDragging) return;
         const y = 'touches' in e ? e.touches[0].clientY : e.clientY;
         const deltaY = y - startY;
-        const deltaRotation = deltaY * 0.5; // Sensitivity
+        // Reversed direction for drag: dragging up (negative deltaY) should rotate forward (positive rotation)
+        const deltaRotation = -deltaY * 0.5;
         setRotation(startRotation + deltaRotation);
 
         // Update for velocity calculation
@@ -93,8 +95,9 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
         const deltaTime = Date.now() - lastTimeStampRef.current;
 
         // Calculate velocity based on the last movement (flick)
-        const speed = deltaTime > 0 ? (deltaY / deltaTime) * 10 : 0;
-        setVelocity(speed * 0.5);
+        // Reversed direction for flick
+        const speed = deltaTime > 0 ? (-deltaY / deltaTime) * 15 : 0; // Increased multiplier for more momentum
+        setVelocity(speed * 0.8); // Increased retention
     };
 
     useEffect(() => {
