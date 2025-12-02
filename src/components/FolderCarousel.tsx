@@ -181,10 +181,12 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
                     const normalizedDepth = (cosVal + 1) / 2; // 0 (back) to 1 (front)
 
                     // Apply fading: front = 1.0, back = 0.3
-                    const opacity = 0.3 + (normalizedDepth * 0.7);
+                    // Boost opacity: if it's in the front half (normalizedDepth > 0.5), make it fully visible or very bright
+                    // This ensures items don't dim too aggressively when slightly off-center
+                    const opacity = normalizedDepth > 0.8 ? 1 : 0.3 + (normalizedDepth * 0.7);
 
                     // Apply brightness: front = 1.0, back = 0.4
-                    const brightness = 0.4 + (normalizedDepth * 0.6);
+                    const brightness = normalizedDepth > 0.8 ? 1 : 0.4 + (normalizedDepth * 0.6);
 
                     // Calculate z-index to ensure correct layering
                     // Front items (higher normalizedDepth) get higher z-index
