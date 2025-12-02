@@ -169,21 +169,22 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
                 {folders.map((folder, index) => {
                     const angle = index * angleStep;
 
-                    // Calculate depth-based effects
-                    // The wheel rotates, each item sits at its base angle
-                    // Combined angle = base position + rotation
-                    const totalAngle = (angle + rotation) % 360;
-                    const normalizedAngle = totalAngle < 0 ? totalAngle + 360 : totalAngle;
+                    // Calculate depth-based effects using Cosine for robust "closest to viewer" logic
+                    // 0 degrees is front (closest), 180 is back (farthest)
+                    // Cosine(0) = 1, Cosine(180) = -1
+                    const rad = (angle + rotation) * Math.PI / 180;
+                    const cosVal = Math.cos(rad);
 
-                    // Front is at 0°/360°, back is at 180°
-                    // Calculate distance from front (0 = front, 1 = back)
-                    const angleFromFront = Math.abs(normalizedAngle - 180);
-                    const distanceFromFront = 1 - (angleFromFront / 180);
+                    // Map cosVal (-1 to 1) to opacity/brightness
+                    // We want front (1) to be fully visible, back (-1) to be dim
+                    // Normalize to 0-1 range where 1 is front
+                    const normalizedDepth = (cosVal + 1) / 2; // 0 (back) to 1 (front)
 
                     // Apply fading: front = 1.0, back = 0.3
-                    const opacity = 1 - (distanceFromFront * 0.7);
-                    // Apply brightness: front = 1.0, back = 0.4  
-                    const brightness = 1 - (distanceFromFront * 0.6);
+                    const opacity = 0.3 + (normalizedDepth * 0.7);
+
+                    // Apply brightness: front = 1.0, back = 0.4
+                    const brightness = 0.4 + (normalizedDepth * 0.6);
 
                     return (
                         <div

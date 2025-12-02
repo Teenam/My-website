@@ -143,6 +143,7 @@ function App() {
       <Header
         title={config.title}
         subtitle={config.subtitle}
+        version={config.version}
       />
 
       {/* View Toggle Button */}
