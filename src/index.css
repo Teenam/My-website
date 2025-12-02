@@ -215,8 +215,9 @@ header {
   overflow: hidden;
 
   /* Transition Fix: Fade in previews after delay to prevent flashing */
+  /* Increased delay to 1.5s to ensure app content is fully loaded and blur is rendered before showing contents */
   opacity: 0;
-  animation: fadeInPreviews 0.5s ease 0.2s forwards;
+  animation: fadeInPreviews 0.5s ease 1.5s forwards;
 }
 
 @keyframes fadeInPreviews {
