@@ -20,6 +20,7 @@ interface ModalProps {
 const FileModal: React.FC<ModalProps> = ({ isOpen, folderName, files, onClose, originRect }) => {
     const [isAnimating, setIsAnimating] = useState(false);
     const [showContent, setShowContent] = useState(false);
+    const [inspectingIndex, setInspectingIndex] = useState<number | null>(null);
     const modalRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -34,8 +35,31 @@ const FileModal: React.FC<ModalProps> = ({ isOpen, folderName, files, onClose, o
             });
         } else {
             setShowContent(false);
+            setInspectingIndex(null); // Reset inspection when modal closes
         }
     }, [isOpen, originRect]);
+
+    // ESC key to close inspection
+    useEffect(() => {
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && inspectingIndex !== null) {
+                setInspectingIndex(null);
+            }
+        };
+        window.addEventListener('keydown', handleEscape);
+        return () => window.removeEventListener('keydown', handleEscape);
+    }, [inspectingIndex]);
+
+    const handleSocialClick = (e: React.MouseEvent, index: number, url: string) => {
+        if (inspectingIndex === index) {
+            // Second click while inspecting - navigate
+            window.open(url, '_blank');
+        } else {
+            // First click - inspect
+            e.preventDefault();
+            setInspectingIndex(index);
+        }
+    };
 
     if (!isOpen) return null;
 
@@ -95,12 +119,27 @@ const FileModal: React.FC<ModalProps> = ({ isOpen, folderName, files, onClose, o
                                     </a>
                                 )}
                                 {file.type === 'social' && (
-                                    <a href={file.url} target="_blank" rel="noopener noreferrer" className="file-icon-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', color: 'white', textDecoration: 'none', transition: 'transform 0.3s' }}>
+                                    <div
+                                        className={`social-icon-card ${inspectingIndex === index ? 'inspecting' : ''}`}
+                                        onClick={(e) => handleSocialClick(e, index, file.url)}
+                                        style={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            width: '100%',
+                                            height: '100%',
+                                            color: 'white',
+                                            cursor: 'pointer',
+                                            transition: 'transform 0.3s, filter 0.3s',
+                                            position: 'relative'
+                                        }}
+                                    >
                                         <i className={file.name} style={{ fontSize: '5rem', marginBottom: '1rem', filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.3))' }}></i>
                                         <div className="file-name" style={{ fontSize: '1.2rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                                             {file.name.replace('fab fa-', '').replace('fas fa-', '').replace('far fa-', '')}
                                         </div>
-                                    </a>
+                                    </div>
                                 )}
                                 {(file.type === 'image') && (
                                     <div className="file-name">{file.name}</div>

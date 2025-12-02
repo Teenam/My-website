@@ -190,7 +190,7 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
                             key={index}
                             className="carousel-item"
                             style={{
-                                transform: `rotateX(${-angle}deg) translateZ(${radius}px) rotateX(${-rotation}deg)`,
+                                transform: `rotateX(${-angle}deg) translateZ(${radius}px) rotateX(${angle - rotation}deg)`,
                                 opacity: opacity,
                                 filter: `brightness(${brightness})`,
                                 transition: 'opacity 0.1s, filter 0.1s'
