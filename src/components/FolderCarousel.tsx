@@ -186,14 +186,19 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
                     // Apply brightness: front = 1.0, back = 0.4
                     const brightness = 0.4 + (normalizedDepth * 0.6);
 
+                    // Calculate z-index to ensure correct layering
+                    // Front items (higher normalizedDepth) get higher z-index
+                    const zIndex = Math.round(normalizedDepth * 100);
+
                     return (
                         <div
-                            key={index}
+                            key={folder.name}
                             className="carousel-item"
                             style={{
                                 transform: `rotateX(${-angle}deg) translateZ(${radius}px) rotateX(${angle - rotation}deg)`,
                                 opacity: opacity,
                                 filter: `brightness(${brightness})`,
+                                zIndex: zIndex,
                                 transition: 'opacity 0.1s, filter 0.1s'
                             }}
                         >
