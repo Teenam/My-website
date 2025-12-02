@@ -10,8 +10,8 @@ const Header: React.FC<HeaderProps> = ({ title, subtitle, version }) => {
     return (
         <header>
             <div className="header-content">
-                <h1>{title}</h1>
                 <div className="decorative-bar"></div>
+                <h1>{title}</h1>
                 <div className="decorative-bar"></div>
                 <p className="subtitle">
                     {subtitle}
