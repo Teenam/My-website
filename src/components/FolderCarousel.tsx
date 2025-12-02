@@ -178,6 +178,8 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
                     // Map cosVal (-1 to 1) to opacity/brightness
                     // We want front (1) to be fully visible, back (-1) to be dim
                     // Normalize to 0-1 range where 1 is front
+                    const normalizedDepth = (cosVal + 1) / 2; // 0 (back) to 1 (front)
+
                     // Removed depth-based fading as requested
                     const opacity = 1;
                     const brightness = 1;
