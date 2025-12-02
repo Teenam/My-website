@@ -1174,6 +1174,80 @@ footer p {
   visibility: hidden;
 }
 
+/* Loading Screen */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  background: #050505;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.8s ease-in-out, visibility 0.8s;
+  opacity: 1;
+  visibility: visible;
+}
+
+.loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-family: var(--font-display);
+  letter-spacing: 0.3em;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Main Content Entrance Animation */
+.app-content {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease 0.5s, transform 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s;
+}
+
+.app-content.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* Version Tag */
 .version-tag {
   display: inline-block;

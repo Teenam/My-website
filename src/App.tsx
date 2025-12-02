@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Header from './components/Header';
+import LoadingScreen from './components/LoadingScreen';
 import FolderGrid from './components/FolderGrid';
 import FolderCarousel from './components/FolderCarousel';
 import FileModal from './components/FileModal';
@@ -36,6 +37,7 @@ function App() {
   const [originRect, setOriginRect] = useState<DOMRect | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'carousel'>('grid');
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [config, setConfig] = useState<ConfigData>({
     title: "PORTFOLIO",
     subtitle: "COLLECTION 2025",
@@ -44,11 +46,13 @@ function App() {
   });
 
   useEffect(() => {
-    // Load Content
-    fetch('/My-website/content.json')
-      .then(res => res.json())
-      .then(data => {
-        const transformedFolders = data.map((folder: any) => ({
+    const loadData = async () => {
+      try {
+        // Load Content
+        const contentRes = await fetch('/My-website/content.json');
+        const contentData = await contentRes.json();
+
+        const transformedFolders = contentData.map((folder: any) => ({
           name: folder.name,
           files: folder.files.map((file: string) => {
             const ext = file.split('.').pop()?.toLowerCase() || '';
@@ -65,17 +69,26 @@ function App() {
           })
         }));
         setContent({ folders: transformedFolders });
-      })
-      .catch(err => console.error("Failed to load content:", err));
 
-    // Load Config
-    fetch(`/My-website/config.json?t=${Date.now()}`)
-      .then(res => res.json())
-      .then(data => {
-        console.log("Loaded config:", data);
-        setConfig(data);
-      })
-      .catch(err => console.error("Failed to load config:", err));
+        // Load Config
+        const configRes = await fetch(`/My-website/config.json?t=${Date.now()}`);
+        const configData = await configRes.json();
+        console.log("Loaded config:", configData);
+        setConfig(configData);
+
+        // Minimum loading time for smooth transition
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
+
+      } catch (err) {
+        console.error("Failed to load data:", err);
+        // Ensure loading screen goes away even on error
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
   }, []);
 
   // Prevent body scroll when carousel is active
@@ -111,7 +124,7 @@ function App() {
     }, 600); // Match animation duration
   };
 
-  if (!config || !content) return <div className="loading">Loading...</div>;
+  if (!config || !content) return <LoadingScreen isLoading={true} />;
 
   const currentFolderFiles = selectedFolder
     ? content.folders.find(f => f.name === selectedFolder)?.files || []
@@ -138,43 +151,45 @@ function App() {
 
   return (
     <div className="app">
+      <LoadingScreen isLoading={isLoading} />
       <StarfieldBackground />
 
-      <Header
-        title={config.title}
-        subtitle={config.subtitle}
-        version={config.version}
-      />
+      <div className={`app-content ${!isLoading ? 'visible' : ''}`}>
+        <Header
+          title={config.title}
+          subtitle={config.subtitle}
+          version={config.version}
+        />
 
-      {/* View Toggle Button */}
-      <button
-        className={`view-toggle ${viewMode === 'carousel' ? 'carousel-mode' : ''}`}
-        onClick={() => {
-          setIsTransitioning(true);
-          setTimeout(() => {
-            setViewMode(prev => prev === 'grid' ? 'carousel' : 'grid');
-            setTimeout(() => setIsTransitioning(false), 50);
-          }, 200);
-        }}
-        title={viewMode === 'grid' ? "Switch to Carousel" : "Switch to Grid"}
-      >
-        <i className={`fas ${viewMode === 'grid' ? 'fa-circle-notch' : 'fa-th-large'}`}></i>
-      </button>
+        {/* View Toggle Button */}
+        <button
+          className={`view-toggle ${viewMode === 'carousel' ? 'carousel-mode' : ''}`}
+          onClick={() => {
+            setIsTransitioning(true);
+            setTimeout(() => {
+              setViewMode(prev => prev === 'grid' ? 'carousel' : 'grid');
+              setTimeout(() => setIsTransitioning(false), 50);
+            }, 200);
+          }}
+          title={viewMode === 'grid' ? "Switch to Carousel" : "Switch to Grid"}
+        >
+          <i className={`fas ${viewMode === 'grid' ? 'fa-circle-notch' : 'fa-th-large'}`}></i>
+        </button>
 
-      <div className={`view-container ${isTransitioning ? 'transitioning' : ''} ${viewMode}`}>
-        {viewMode === 'grid' ? (
-          <FolderGrid
-            folders={displayFolders}
-            onFolderClick={handleFolderClick}
-          />
-        ) : (
-          <FolderCarousel
-            folders={displayFolders}
-            onFolderClick={handleFolderClick}
-          />
-        )}
+        <div className={`view-container ${isTransitioning ? 'transitioning' : ''} ${viewMode}`}>
+          {viewMode === 'grid' ? (
+            <FolderGrid
+              folders={displayFolders}
+              onFolderClick={handleFolderClick}
+            />
+          ) : (
+            <FolderCarousel
+              folders={displayFolders}
+              onFolderClick={handleFolderClick}
+            />
+          )}
+        </div>
       </div>
-
 
       <FileModal
         isOpen={!!selectedFolder}
