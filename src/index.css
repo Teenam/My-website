@@ -1155,6 +1155,13 @@ footer p {
   transform: scale(0.95);
 }
 
+/* Hide folder internals during transition */
+.view-container.transitioning .folder-preview-items,
+.view-container.transitioning .preview-item {
+  opacity: 0 !important;
+  visibility: hidden;
+}
+
 @media (max-width: 768px) {
   .view-toggle {
     top: auto;

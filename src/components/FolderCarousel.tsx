@@ -170,15 +170,19 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
                     const angle = index * angleStep;
 
                     // Calculate depth-based effects
-                    // Normalize angle to 0-360 range
-                    const normalizedAngle = ((angle + rotation) % 360 + 360) % 360;
-                    // 0° = front center, 180° = back center
-                    // Distance from front: 0 at front (0° or 360°), 1 at back (180°)
-                    const distanceFromFront = Math.abs(normalizedAngle - 180) / 180;
+                    // The wheel rotates, each item sits at its base angle
+                    // Combined angle = base position + rotation
+                    const totalAngle = (angle + rotation) % 360;
+                    const normalizedAngle = totalAngle < 0 ? totalAngle + 360 : totalAngle;
+
+                    // Front is at 0°/360°, back is at 180°
+                    // Calculate distance from front (0 = front, 1 = back)
+                    const angleFromFront = Math.abs(normalizedAngle - 180);
+                    const distanceFromFront = 1 - (angleFromFront / 180);
 
                     // Apply fading: front = 1.0, back = 0.3
                     const opacity = 1 - (distanceFromFront * 0.7);
-                    // Apply brightness: front = 1.0, back = 0.4
+                    // Apply brightness: front = 1.0, back = 0.4  
                     const brightness = 1 - (distanceFromFront * 0.6);
 
                     return (
@@ -188,7 +192,8 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
                             style={{
                                 transform: `rotateX(${-angle}deg) translateZ(${radius}px) rotateX(${-rotation}deg)`,
                                 opacity: opacity,
-                                filter: `brightness(${brightness})`
+                                filter: `brightness(${brightness})`,
+                                transition: 'opacity 0.1s, filter 0.1s'
                             }}
                         >
                             <Folder
