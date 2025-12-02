@@ -188,7 +188,8 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
 
                     // Calculate z-index to ensure correct layering
                     // Front items (higher normalizedDepth) get higher z-index
-                    const zIndex = Math.round(normalizedDepth * 100);
+                    // Multiplier increased to 1000 to prevent z-fighting
+                    const zIndex = Math.round(normalizedDepth * 1000);
 
                     return (
                         <div
