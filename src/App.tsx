@@ -94,11 +94,9 @@ function App() {
     setSelectedFolder(null);
   }, []);
 
-  if (!config || !content) return <LoadingScreen isLoading={true} />;
-
-
   // Memoize folders with injected Socials
   const displayFolders = useMemo(() => {
+    if (!content) return [];
     const folders = [...content.folders];
     if (config.socials?.length) {
       folders.push({
@@ -111,12 +109,14 @@ function App() {
       });
     }
     return folders;
-  }, [content.folders, config.socials]);
+  }, [content, config.socials]);
 
   const modalFiles = useMemo(() =>
     selectedFolder ? displayFolders.find(f => f.name === selectedFolder)?.files || [] : [],
     [selectedFolder, displayFolders]
   );
+
+  if (!config || !content) return <LoadingScreen isLoading={true} />;
 
   return (
     <div className="app">
