@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import Folder from './Folder';
 import { useEventListener } from '../hooks/useEventListener';
 import type { FolderData } from '../types';
@@ -55,7 +55,10 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
         setVelocity(delta * 0.1);
     }, []);
 
-    useEventListener('wheel', handleWheel, containerRef.current, { passive: false });
+    // Memoize options to prevent infinite re-renders
+    const wheelOptions = useMemo(() => ({ passive: false }), []);
+
+    useEventListener('wheel', handleWheel, containerRef.current, wheelOptions);
 
     // Unified pointer start (mouse/touch)
     const handlePointerStart = useCallback((y: number) => {
