@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 interface HeaderProps {
     title: string;
@@ -22,4 +22,4 @@ const Header: React.FC<HeaderProps> = ({ title, subtitle, version }) => {
     );
 };
 
-export default Header;
+export default memo(Header);

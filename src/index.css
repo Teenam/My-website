@@ -1,10 +1,21 @@
+/* ===========================================
+   CSS Variables & Reset
+   =========================================== */
 :root {
+  /* Colors */
+  --color-bg: #0a0a0f;
+  --color-text: #ffffff;
+  --color-accent: #a8c0ff;
+
+  /* Glass Effects */
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-  --text-color: #ffffff;
-  --font-heading: 'Bodoni Moda', serif;
-  --font-body: 'Inter', sans-serif;
+
+  /* Fonts */
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'Cormorant Garamond', serif;
+  --font-ui: 'Raleway', sans-serif;
 }
 
 * {
@@ -13,34 +24,35 @@
   box-sizing: border-box;
 }
 
-:root {
-  --color-bg: #0a0a0f;
-  --color-text: #ffffff;
-  --color-accent: #a8c0ff;
-  --font-display: 'Playfair Display', serif;
-  --font-body: 'Cormorant Garamond', serif;
-  --font-ui: 'Raleway', sans-serif;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #050505;
-  color: #ffffff;
-  font-family: var(--font-ui);
-  overflow-x: hidden;
-  overscroll-behavior-y: none;
-  /* Prevent bounce/stutter */
-  min-height: 100vh;
-  min-height: 100dvh;
-  line-height: 1.6;
-}
-
 html {
   overscroll-behavior-y: none;
 }
 
-/* Typography */
+body {
+  background-color: #050505;
+  color: var(--color-text);
+  font-family: var(--font-ui);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: none;
+  min-height: 100vh;
+  min-height: 100dvh;
+  line-height: 1.6;
+
+  /* CRITICAL: Reserve scrollbar space to prevent layout shift */
+  /* This ensures toggle button doesn't jump when switching modes */
+  scrollbar-gutter: stable;
+}
+
+body.carousel-active {
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+  /* Scrollbar space still reserved due to scrollbar-gutter */
+}
+
+/* ===========================================
+   Typography
+   =========================================== */
 h1,
 h2,
 h3 {
@@ -53,30 +65,38 @@ h1,
 header h1 {
   font-family: var(--font-display);
   font-size: clamp(1.8rem, 8vw, 5rem);
-  /* Dynamic sizing */
-  font-weight: 400;
-  letter-spacing: 0.2em;
-  margin-bottom: 1rem;
-  text-shadow: 0 0 30px rgba(168, 192, 255, 0.3);
-  animation: titleGlow 4s ease-in-out infinite alternate;
-  width: 100%;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  line-height: 1;
   text-align: center;
   white-space: nowrap;
-  /* Prevent wrapping */
+  width: 100%;
+  margin-bottom: 1rem;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   filter: drop-shadow(0 4px 20px rgba(168, 192, 255, 0.4));
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  line-height: 1;
-  text-align: center;
+  animation: titleGlow 4s ease-in-out infinite alternate;
 }
 
-/* Header */
+@keyframes titleGlow {
+
+  0%,
+  100% {
+    text-shadow: 0 0 30px rgba(168, 192, 255, 0.3);
+  }
+
+  50% {
+    text-shadow: 0 0 40px rgba(168, 192, 255, 0.5);
+  }
+}
+
+/* ===========================================
+   Header
+   =========================================== */
 header {
-  padding: 2rem 2rem;
+  padding: 2rem;
   text-align: center;
   position: sticky;
   top: 0;
@@ -87,8 +107,6 @@ header {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 0 0 30px 30px;
   transition: all 0.3s ease;
-
-  /* PERFORMANCE: Force immediate blur rendering on load */
   will-change: backdrop-filter;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
@@ -107,8 +125,6 @@ header {
   height: 1px;
   background: rgba(168, 192, 255, 0.6);
   margin: 0.8rem 0;
-  border: none;
-  border-radius: 0;
 }
 
 .subtitle {
@@ -120,7 +136,39 @@ header {
   font-weight: 300;
 }
 
-/* Folders Grid */
+.version-tag {
+  display: inline-block;
+  margin-left: 0.8rem;
+  font-size: 0.7em;
+  font-weight: 400;
+  opacity: 0.6;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  vertical-align: middle;
+  letter-spacing: 0.05em;
+}
+
+/* ===========================================
+   Glass Panel System
+   =========================================== */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: backdrop-filter, transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  contain: layout style paint;
+}
+
+/* ===========================================
+   Folder System
+   =========================================== */
 .folders-grid {
   display: flex;
   flex-wrap: wrap;
@@ -132,7 +180,6 @@ header {
   perspective: 1000px;
 }
 
-/* Liquid Glass Folder Container */
 .folder-card {
   width: clamp(140px, 20vw, 180px);
   height: clamp(110px, 16vw, 140px);
@@ -142,37 +189,24 @@ header {
   transition: transform 0.3s ease;
 }
 
-/* Common Glass Style */
-.glass-panel {
+.folder-card:hover {
+  transform: translateY(-5px);
+}
+
+.folder-back {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-
-  /* PERFORMANCE: Force immediate blur rendering - prevent late pop-in */
-  will-change: backdrop-filter, transform;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  contain: layout style paint;
-}
-
-/* Folder Back Plate */
-.folder-back {
   z-index: 0;
   transform: translateZ(-10px);
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* Folder Front Plate (The Cover) */
 .folder-front {
+  position: absolute;
+  width: 100%;
+  height: 100%;
   z-index: 2;
-  /* Ensure front is above previews (1) and back (0) */
   transform-origin: bottom;
   transform: rotateX(0deg);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
@@ -180,7 +214,6 @@ header {
   align-items: center;
   justify-content: center;
   border-radius: 0 20px 20px 20px;
-  /* Top-left sharp for tab connection */
 }
 
 .folder-front::before {
@@ -196,7 +229,6 @@ header {
   border-left: 1px solid rgba(255, 255, 255, 0.2);
   border-right: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
-  border-bottom: none;
 }
 
 .folder-name {
@@ -208,50 +240,6 @@ header {
   text-shadow: 0 2px 8px rgba(168, 192, 255, 0.3);
   pointer-events: none;
   font-weight: 500;
-}
-
-/* Content Preview */
-.folder-preview-items {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  z-index: 1;
-  /* Between back (0) and front (2) */
-  transform: translateZ(-5px);
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  overflow: hidden;
-
-  /* Transition Fix: Fade in previews after delay to prevent flashing */
-  /* Increased delay to 1.5s to ensure app content is fully loaded and blur is rendered before showing contents */
-  opacity: 0;
-  animation: fadeInPreviews 0.5s ease 1.5s forwards;
-}
-
-@keyframes fadeInPreviews {
-  to {
-    opacity: 1;
-  }
-}
-
-.preview-item {
-  height: 33%;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transform: translateY(20px);
-  transition: transform 0.5s ease;
-  opacity: 0.7;
-  background-size: cover;
-  background-position: center;
-}
-
-/* Hover Effects with Animation */
-.folder-card:hover {
-  transform: translateY(-5px);
 }
 
 .folder-card:hover .folder-front {
@@ -273,6 +261,54 @@ header {
   }
 }
 
+/* Folder Previews */
+.folder-preview-items {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  z-index: 1;
+  transform: translateZ(-5px);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeInPreviews 0.5s ease 1.5s forwards;
+}
+
+@keyframes fadeInPreviews {
+  to {
+    opacity: 1;
+  }
+}
+
+.preview-item {
+  height: 33%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transform: translateY(20px);
+  transition: transform 0.5s ease;
+  opacity: 0.7;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-icon {
+  font-size: 1.5rem;
+  opacity: 0.5;
+}
+
+.preview-icon-fa {
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
 .folder-card:hover .preview-item {
   transform: translateY(0);
   opacity: 1;
@@ -290,138 +326,140 @@ header {
   transition-delay: 0.15s;
 }
 
-/* Footer */
-footer {
+/* ===========================================
+   View Toggle Button
+   =========================================== */
+.view-toggle {
   position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: auto;
-  min-width: 300px;
-  padding: 1rem 2rem;
+  top: 0;
+  bottom: 0;
+  right: 2rem;
+  height: 50px;
+  width: 50px;
+  margin: auto 0;
   z-index: 100;
   background: rgba(10, 10, 15, 0.6);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 50px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-}
-
-.footer-content {
+  border-radius: 50%;
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
-  font-family: var(--font-ui);
-}
-
-.socials {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.socials a {
+  cursor: pointer;
   color: #fff;
-  font-size: 1.1rem;
-  opacity: 0.6;
-  transition: all 0.3s;
-  text-decoration: none;
+  transition: background 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  will-change: backdrop-filter, transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
-.socials a:hover {
+.view-toggle:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.view-toggle:active {
+  transform: scale(0.95);
+}
+
+.view-toggle i {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.view-toggle.carousel-mode i {
+  transform: rotate(180deg);
+}
+
+/* View container transitions */
+.view-container {
+  transition: opacity 0.4s ease, transform 0.4s ease;
   opacity: 1;
-  transform: translateY(-2px);
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transform: scale(1);
 }
 
-footer p {
-  font-size: 0.75rem;
-  opacity: 0.5;
-  letter-spacing: 0.05em;
-  margin: 0;
-  border-left: 1px solid rgba(255, 255, 255, 0.2);
-  padding-left: 1.5rem;
+.view-container.transitioning {
+  opacity: 0;
+  transform: scale(0.95);
 }
 
-/* Modal with Hyperspace Effect */
-.modal-overlay {
+.view-container.transitioning .folder-preview-items,
+.view-container.transitioning .preview-item {
+  opacity: 0 !important;
+  visibility: hidden;
+}
+
+/* ===========================================
+   Carousel Mode
+   =========================================== */
+.carousel-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  perspective: 1000px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  cursor: grab;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.carousel-container::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-container:active {
+  cursor: grabbing;
+}
+
+.carousel-wheel {
+  position: relative;
+  width: 100%;
   height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.1s linear;
+}
+
+.carousel-item {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(140px, 20vw, 180px);
+  height: clamp(110px, 16vw, 140px);
+  margin-top: calc(clamp(110px, 16vw, 140px) * -0.5);
+  margin-left: calc(clamp(140px, 20vw, 180px) * -0.5);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+/* ===========================================
+   Modal System
+   =========================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
   background: rgba(0, 0, 0, 0.1);
-  /* Very subtle dimming */
-  /* Removed backdrop-filter to keep stars visible */
   z-index: 200;
   display: flex;
   justify-content: center;
   align-items: center;
   opacity: 0;
-  pointer-events: auto;
+  pointer-events: none;
   transition: opacity 0.4s ease;
 }
 
-/* ... (keep existing hyperspace animations) ... */
-
-.folder-cover {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
-  border-radius: 0 20px 20px 20px;
-  z-index: 10;
-  transform-origin: bottom;
-  transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="%23ff6b6b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" opacity="0.2" fill="%23ff6b6b"/><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>') 14 14, not-allowed;
 }
-
-.folder-cover .folder-name {
-  transition: opacity 0.2s ease, transform 0.4s ease;
-}
-
-.folder-cover.open {
-  transform: rotateX(-180deg);
-  opacity: 0;
-}
-
-/* Floating Title Animation */
-.floating-title {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-display);
-  font-size: 0.7rem;
-  /* Start small like on folder */
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #fff;
-  z-index: 202;
-  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  text-shadow: 0 2px 8px rgba(168, 192, 255, 0.3);
-  pointer-events: none;
-  width: 100%;
-  text-align: center;
-}
-
-.floating-title.animate-to-header {
-  top: 3rem;
-  /* Move to header position */
-  transform: translate(-50%, 0);
-  font-size: 2rem;
-  /* Scale up to header size */
-  letter-spacing: 0.1em;
-}
-
-/* Removed .modal-content h2 and keyframes as we use floating-title now */
 
 .modal-overlay::before {
   content: '';
@@ -442,6 +480,10 @@ footer p {
   animation: hyperspace 0.6s ease-out forwards;
 }
 
+.modal-overlay.closing::before {
+  animation: hyperspace-reverse 0.6s ease-in forwards;
+}
+
 @keyframes hyperspace {
   0% {
     opacity: 0;
@@ -456,10 +498,6 @@ footer p {
     opacity: 0;
     transform: translate(-50%, -50%) scale(3);
   }
-}
-
-.modal-overlay.closing::before {
-  animation: hyperspace-reverse 0.6s ease-in forwards;
 }
 
 @keyframes hyperspace-reverse {
@@ -478,39 +516,22 @@ footer p {
   }
 }
 
-.modal-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
-  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="%23ff6b6b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" opacity="0.2" fill="%23ff6b6b"/><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>') 14 14, not-allowed;
-}
-
-.modal-overlay:not(.active) {
-  pointer-events: none;
-  cursor: default;
-}
-
 .modal-content {
   background: rgba(10, 10, 15, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 0;
-  /* Reset padding for animation */
   width: 90%;
   max-width: 1400px;
   height: 85%;
   position: fixed;
-  /* Changed to fixed for FLIP */
   top: 7.5%;
   left: 5%;
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
-  transform: none;
-  /* Reset transform */
   transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   border-radius: 30px;
   cursor: default;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   overflow: hidden;
-  /* Hide overflow during animation */
   z-index: 201;
 }
 
@@ -518,7 +539,6 @@ footer p {
   transition: none;
   z-index: 201;
 }
-
 
 .modal-inner-content {
   padding: 3rem;
@@ -532,13 +552,9 @@ footer p {
   opacity: 1;
 }
 
-/* Folder Cover Animation in Modal */
 .folder-cover {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
   border-radius: 0 20px 20px 20px;
   z-index: 10;
@@ -550,49 +566,41 @@ footer p {
   pointer-events: none;
 }
 
-.folder-cover::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: 0;
-  width: 40%;
-  height: 10px;
-  background: inherit;
-  border-radius: 20px 20px 0 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  border-left: 1px solid rgba(255, 255, 255, 0.2);
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border-bottom: none;
-}
-
 .folder-cover.open {
   transform: rotateX(-180deg);
   opacity: 0;
 }
 
-
-.modal-content h2 {
+.floating-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   font-family: var(--font-display);
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  letter-spacing: 0.1em;
-}
-
-.close-modal {
-  display: none;
-}
-
-.close-modal:hover {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
   color: #fff;
-  transform: rotate(90deg);
+  z-index: 202;
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-shadow: 0 2px 8px rgba(168, 192, 255, 0.3);
+  pointer-events: none;
+  width: 100%;
+  text-align: center;
+}
+
+.floating-title.animate-to-header {
+  top: 3rem;
+  transform: translate(-50%, 0);
+  font-size: 2rem;
+  letter-spacing: 0.1em;
 }
 
 .mobile-back-arrow {
   display: none !important;
-  /* Force hidden on desktop */
 }
 
+/* File Grid */
 .file-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -636,7 +644,48 @@ footer p {
   font-weight: 300;
 }
 
-/* Custom Video Player */
+.file-icon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  color: white;
+  text-decoration: none;
+}
+
+.file-icon-large {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.social-icon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.3s, filter 0.3s;
+  position: relative;
+}
+
+.social-icon-large {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.social-name {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ===========================================
+   Custom Video Player
+   =========================================== */
 .custom-video-player {
   position: relative;
   width: 100%;
@@ -644,14 +693,11 @@ footer p {
   background: #000;
   border-radius: 16px;
   overflow: hidden;
-
-  /* group: hover .video-controls { opacity: 1; } - Invalid syntax */
 }
 
 .custom-video-player:hover .video-controls {
   opacity: 1;
 }
-
 
 .custom-video-player video {
   width: 100%;
@@ -687,7 +733,6 @@ footer p {
   font-size: 1.5rem;
   color: #fff;
   margin-left: 4px;
-  /* Optical adjustment for play icon */
 }
 
 .video-controls {
@@ -814,7 +859,9 @@ footer p {
   opacity: 1;
 }
 
-/* Custom Audio Player */
+/* ===========================================
+   Custom Audio Player
+   =========================================== */
 .custom-audio-player {
   display: flex;
   align-items: center;
@@ -844,10 +891,6 @@ footer p {
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
   to {
     transform: rotate(360deg);
   }
@@ -862,10 +905,7 @@ footer p {
   height: 90%;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  background: repeating-radial-gradient(#111,
-      #111 2px,
-      #222 3px,
-      #111 4px);
+  background: repeating-radial-gradient(#111, #111 2px, #222 3px, #111 4px);
 }
 
 .vinyl-label {
@@ -907,54 +947,6 @@ footer p {
   gap: 1rem;
 }
 
-/* REGRESSION PREVENTION: Toggle button positioning
- * CRITICAL FIX: Using inset-based positioning to prevent jumping when overflow changes
- * Previous issue: top:50% recalculated when body.carousel-active changed overflow:hidden
- * Solution: Use inset (top+bottom) to achieve vertical centering without percentage
- * The combination of top:0, bottom:0, height:50px, margin:auto centers the button
- * This value is STABLE across all body overflow states
- */
-.view-toggle {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  right: 2rem;
-  height: 50px;
-  /* Fixed height */
-  width: 50px;
-  margin: auto 0;
-  /* Centers vertically with top:0 bottom:0 */
-  z-index: 100;
-  background: rgba(10, 10, 15, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #fff;
-  transition: background 0.3s ease, transform 0.3s ease;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-
-  /* PERFORMANCE: Force immediate blur rendering */
-  will-change: backdrop-filter, transform;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-.view-toggle:hover {
-  transform: scale(1.1);
-  /* Simple scale - no need for translate */
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.view-toggle:active {
-  transform: scale(0.95);
-  /* Simple scale - no need for translate */
-}
-
 .audio-play-btn {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -978,7 +970,6 @@ footer p {
 .audio-play-btn i {
   font-size: 0.9rem;
   margin-left: 2px;
-  /* Optical adjustment */
 }
 
 .audio-play-btn i.fa-pause {
@@ -1022,196 +1013,9 @@ footer p {
   opacity: 1;
 }
 
-/* Mobile Optimization */
-@media (max-width: 768px) {
-  header {
-    position: relative;
-    /* Non-sticky on mobile */
-    border-radius: 0;
-  }
-
-  .folders-grid {
-    gap: 2rem;
-    padding: 2rem 1rem;
-  }
-
-  /* Footer: Hide until scroll (put in flow) */
-  footer {
-    position: relative;
-    bottom: auto;
-    left: auto;
-    transform: none;
-    width: 100%;
-    border-radius: 0;
-    margin-top: 4rem;
-    background: rgba(10, 10, 15, 0.8);
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
-  }
-
-  .footer-content {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  footer p {
-    border-left: none;
-    padding-left: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    padding-top: 1rem;
-    width: 100%;
-    text-align: center;
-  }
-
-  /* Modal & File Grid */
-  .modal-content {
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    border-radius: 0;
-  }
-
-  .modal-inner-content {
-    padding: 5rem 1rem 2rem 1rem;
-    /* More top padding for floating title */
-  }
-
-  .floating-title.animate-to-header {
-    top: 2rem;
-    font-size: 1.5rem;
-    width: 90%;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .file-grid {
-    grid-template-columns: 1fr;
-    /* Full width */
-    gap: 1.5rem;
-  }
-
-  .file-item {
-    min-height: 200px;
-  }
-
-  /* Custom Players on Mobile */
-  .custom-audio-player {
-    flex-direction: column;
-    text-align: center;
-    gap: 1rem;
-  }
-
-  .audio-controls-row {
-    width: 100%;
-  }
-
-  /* Show back arrow on mobile */
-  .mobile-back-arrow {
-    display: flex !important;
-    /* Force show on mobile */
-    position: absolute;
-    top: 2rem;
-    left: 1.5rem;
-    background: none;
-    border: none;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 1.5rem;
-    cursor: pointer;
-    z-index: 205;
-    padding: 10px;
-  }
-}
-
-/* Vertical Carousel (Big Wheel) */
-.carousel-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  height: 100dvh;
-  perspective: 1000px;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-  cursor: grab;
-
-  /* Hide scrollbars */
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  scrollbar-width: none;
-  /* Firefox */
-}
-
-.carousel-container::-webkit-scrollbar {
-  display: none;
-  /* Chrome, Safari, Opera */
-}
-
-.carousel-container:active {
-  cursor: grabbing;
-}
-
-.carousel-wheel {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.1s linear;
-  /* Smooth drag */
-}
-
-.carousel-item {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: clamp(140px, 20vw, 180px);
-  /* Match folder width */
-  height: clamp(110px, 16vw, 140px);
-  /* Match folder height */
-  margin-top: calc(clamp(110px, 16vw, 140px) * -0.5);
-  margin-left: calc(clamp(140px, 20vw, 180px) * -0.5);
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  /* Hide items on the back side if desired, or keep visible */
-}
-
-/* View Toggle Button */
-/* View Toggle Button moved to bottom of file */
-
-/* Animated icon rotation */
-.view-toggle i {
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.view-toggle.carousel-mode i {
-  transform: rotate(180deg);
-}
-
-/* View container transitions */
-.view-container {
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  opacity: 1;
-  transform: scale(1);
-}
-
-.view-container.transitioning {
-  opacity: 0;
-  transform: scale(0.95);
-}
-
-/* Hide folder internals during transition */
-.view-container.transitioning .folder-preview-items,
-.view-container.transitioning .preview-item {
-  opacity: 0 !important;
-  visibility: hidden;
-}
-
-/* Loading Screen */
+/* ===========================================
+   Loading Screen
+   =========================================== */
 .loading-screen {
   position: fixed;
   inset: 0;
@@ -1255,12 +1059,6 @@ footer p {
   animation: pulse 2s ease-in-out infinite;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @keyframes pulse {
 
   0%,
@@ -1273,7 +1071,9 @@ footer p {
   }
 }
 
-/* Main Content Entrance Animation */
+/* ===========================================
+   App Content Entrance
+   =========================================== */
 .app-content {
   opacity: 0;
   transform: translateY(20px);
@@ -1285,49 +1085,78 @@ footer p {
   transform: translateY(0);
 }
 
-/* Version Tag */
-.version-tag {
-  display: inline-block;
-  margin-left: 0.8rem;
-  font-size: 0.7em;
-  font-weight: 400;
-  opacity: 0.6;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 0.1em 0.4em;
-  border-radius: 4px;
-  vertical-align: middle;
-  letter-spacing: 0.05em;
-}
-
+/* ===========================================
+   Mobile Responsive
+   =========================================== */
 @media (max-width: 768px) {
+  header {
+    position: relative;
+    border-radius: 0;
+  }
 
-  /* REGRESSION PREVENTION: Mobile toggle button positioning
-   * Use inset-based positioning for horizontal centering
-   * Previous issue: right:50% + translateX(50%) was fragile
-   * Solution: Use left:0, right:0, width:50px, margin:auto for stable centering
-   */
+  .folders-grid {
+    gap: 2rem;
+    padding: 2rem 1rem;
+  }
+
+  .modal-content {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border-radius: 0;
+  }
+
+  .modal-inner-content {
+    padding: 5rem 1rem 2rem 1rem;
+  }
+
+  .floating-title.animate-to-header {
+    top: 2rem;
+    font-size: 1.5rem;
+    width: 90%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .file-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .file-item {
+    min-height: 200px;
+  }
+
+  .custom-audio-player {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .audio-controls-row {
+    width: 100%;
+  }
+
+  .mobile-back-arrow {
+    display: flex !important;
+    position: absolute;
+    top: 2rem;
+    left: 1.5rem;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 205;
+    padding: 10px;
+  }
+
   .view-toggle {
     top: auto;
     bottom: 2rem;
     left: 0;
     right: 0;
     margin: 0 auto;
-    /* Centers horizontally with left:0 right:0 */
   }
-
-  .view-toggle:hover {
-    transform: scale(1.1);
-    /* Simple scale only */
-  }
-
-  .view-toggle:active {
-    transform: scale(0.95);
-    /* Simple scale only */
-  }
-}
-
-/* Prevent body scroll when carousel is active */
-body.carousel-active {
-  overflow: hidden;
-  overscroll-behavior: contain;
 }

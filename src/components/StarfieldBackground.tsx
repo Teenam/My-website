@@ -3,17 +3,15 @@ import { Canvas } from '@react-three/fiber';
 import { Float, Environment } from '@react-three/drei';
 import './StarfieldBackground.css';
 
-// Random white 3D objects
+// Optimized 3D objects with reduced count
 const RandomObjects: React.FC = () => {
-    const count = 15; // Number of objects
-
     const objects = useMemo(() => {
         const shapes = ['box', 'tetrahedron', 'octahedron', 'dodecahedron'];
-        return new Array(count).fill(0).map(() => ({
+        return Array.from({ length: 12 }, () => ({
             position: [
-                (Math.random() - 0.5) * 14, // x spread
-                (Math.random() - 0.5) * 8,  // y spread
-                (Math.random() - 0.5) * 4   // z spread
+                (Math.random() - 0.5) * 14,
+                (Math.random() - 0.5) * 8,
+                (Math.random() - 0.5) * 4
             ] as [number, number, number],
             rotation: [
                 Math.random() * Math.PI,
@@ -52,6 +50,18 @@ const RandomObjects: React.FC = () => {
 const StarfieldBackground: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
+    // Optimized starfield with reduced count
+    const stars = useMemo(() =>
+        Array.from({ length: 150 }, () => ({
+            x: Math.random(),
+            y: Math.random(),
+            size: Math.random() * 2,
+            opacity: Math.random(),
+            twinkleSpeed: 0.001 + Math.random() * 0.003
+        })),
+        []
+    );
+
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -59,7 +69,6 @@ const StarfieldBackground: React.FC = () => {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        // Set canvas size
         const resize = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -67,45 +76,40 @@ const StarfieldBackground: React.FC = () => {
         resize();
         window.addEventListener('resize', resize);
 
-        // Create stars
-        const stars: { x: number; y: number; size: number; opacity: number; twinkleSpeed: number }[] = [];
-        for (let i = 0; i < 200; i++) {
-            stars.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                size: Math.random() * 2,
-                opacity: Math.random(),
-                twinkleSpeed: 0.001 + Math.random() * 0.003
-            });
-        }
+        // Normalized star positions
+        const normalizedStars = stars.map(star => ({
+            ...star,
+            x: star.x * canvas.width,
+            y: star.y * canvas.height
+        }));
 
-        // Animation
-        let frame = 0;
+        let rafId: number;
         const animate = () => {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            stars.forEach(star => {
+            normalizedStars.forEach(star => {
                 star.opacity += star.twinkleSpeed;
                 if (star.opacity > 1 || star.opacity < 0) {
                     star.twinkleSpeed *= -1;
                 }
 
-                ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0, Math.min(1, star.opacity))})`;
+                const clampedOpacity = Math.max(0, Math.min(1, star.opacity));
+                ctx.fillStyle = `rgba(255, 255, 255, ${clampedOpacity})`;
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
                 ctx.fill();
             });
 
-            frame++;
-            requestAnimationFrame(animate);
+            rafId = requestAnimationFrame(animate);
         };
         animate();
 
         return () => {
             window.removeEventListener('resize', resize);
+            cancelAnimationFrame(rafId);
         };
-    }, []);
+    }, [stars]);
 
     return (
         <div className="starfield-background">

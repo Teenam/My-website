@@ -1,11 +1,5 @@
-import React from 'react';
-
-interface FileData {
-    name: string;
-    type: 'image' | 'video' | 'audio' | 'other' | 'social';
-    url: string;
-}
-
+import React, { memo } from 'react';
+import type { FileData } from '../types';
 
 interface FolderProps {
     name: string;
@@ -26,17 +20,14 @@ const Folder: React.FC<FolderProps> = ({ name, files, onClick }) => {
                         key={index}
                         className="preview-item"
                         style={{
-                            backgroundImage: file.type === 'image' ? `url(${file.url})` : undefined,
-                            display: file.type !== 'image' ? 'flex' : undefined,
-                            alignItems: 'center',
-                            justifyContent: 'center'
+                            backgroundImage: file.type === 'image' ? `url(${file.url})` : undefined
                         }}
                     >
-                        {file.type !== 'image' && file.type !== 'social' && (
-                            <span style={{ fontSize: '1.5rem', opacity: 0.5 }}>📄</span>
-                        )}
+                        {file.type === 'video' && <span className="preview-icon">🎥</span>}
+                        {file.type === 'audio' && <span className="preview-icon">🎵</span>}
+                        {file.type === 'other' && <span className="preview-icon">📄</span>}
                         {file.type === 'social' && (
-                            <i className={file.name} style={{ fontSize: '1.5rem', color: 'rgba(255,255,255,0.8)' }}></i>
+                            <i className={`${file.name} preview-icon-fa`}></i>
                         )}
                     </div>
                 ))}
@@ -53,4 +44,4 @@ const Folder: React.FC<FolderProps> = ({ name, files, onClick }) => {
     );
 };
 
-export default Folder;
+export default memo(Folder);

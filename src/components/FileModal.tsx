@@ -1,13 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback, memo } from 'react';
 import CustomVideoPlayer from './CustomVideoPlayer';
 import CustomAudioPlayer from './CustomAudioPlayer';
-
-interface FileData {
-    name: string;
-    type: 'image' | 'video' | 'audio' | 'other' | 'social';
-    url: string;
-}
-
+import { useEventListener } from '../hooks/useEventListener';
+import type { FileData } from '../types';
 
 interface ModalProps {
     isOpen: boolean;
@@ -26,7 +21,6 @@ const FileModal: React.FC<ModalProps> = ({ isOpen, folderName, files, onClose, o
     useEffect(() => {
         if (isOpen && originRect) {
             setIsAnimating(true);
-            // Small delay to allow render before transition
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     setIsAnimating(false);
@@ -35,31 +29,28 @@ const FileModal: React.FC<ModalProps> = ({ isOpen, folderName, files, onClose, o
             });
         } else {
             setShowContent(false);
-            setInspectingIndex(null); // Reset inspection when modal closes
+            setInspectingIndex(null);
         }
     }, [isOpen, originRect]);
 
-    // ESC key to close inspection
-    useEffect(() => {
-        const handleEscape = (e: KeyboardEvent) => {
+    // ESC key handler via custom hook
+    useEventListener(
+        'keydown',
+        useCallback((e: KeyboardEvent) => {
             if (e.key === 'Escape' && inspectingIndex !== null) {
                 setInspectingIndex(null);
             }
-        };
-        window.addEventListener('keydown', handleEscape);
-        return () => window.removeEventListener('keydown', handleEscape);
-    }, [inspectingIndex]);
+        }, [inspectingIndex])
+    );
 
-    const handleSocialClick = (e: React.MouseEvent, index: number, url: string) => {
+    const handleSocialClick = useCallback((e: React.MouseEvent, index: number, url: string) => {
         if (inspectingIndex === index) {
-            // Second click while inspecting - navigate
             window.open(url, '_blank');
         } else {
-            // First click - inspect
             e.preventDefault();
             setInspectingIndex(index);
         }
-    };
+    }, [inspectingIndex]);
 
     if (!isOpen) return null;
 
@@ -80,41 +71,33 @@ const FileModal: React.FC<ModalProps> = ({ isOpen, folderName, files, onClose, o
                 onClick={(e) => e.stopPropagation()}
                 style={style}
             >
-                <div className={`folder-cover ${showContent ? 'open' : ''}`}>
-                    {/* Folder name removed from here to prevent rotation */}
-                </div>
+                <div className={`folder-cover ${showContent ? 'open' : ''}`}></div>
 
-                {/* Floating Title Animation */}
                 <div className={`floating-title ${showContent ? 'animate-to-header' : ''}`}>
                     {folderName.replace(/_/g, ' ')}
                 </div>
 
                 <div className={`modal-inner-content ${showContent ? 'visible' : ''}`}>
-                    <button className="close-modal" onClick={onClose}>&times;</button>
-
-                    {/* Mobile Back Arrow */}
                     <button className="mobile-back-arrow" onClick={onClose}>
                         <i className="fas fa-arrow-left"></i>
                     </button>
 
-                    {/* h2 removed as floating-title takes its place */}
                     <div style={{ height: '2rem', marginBottom: '2rem' }}></div>
 
                     <div className="file-grid">
                         {files.map((file, index) => (
                             <div key={index} className="file-item">
                                 {file.type === 'image' && (
-                                    <img src={file.url} alt={file.name} loading="lazy" />
+                                    <>
+                                        <img src={file.url} alt={file.name} loading="lazy" />
+                                        <div className="file-name">{file.name}</div>
+                                    </>
                                 )}
-                                {file.type === 'video' && (
-                                    <CustomVideoPlayer src={file.url} />
-                                )}
-                                {file.type === 'audio' && (
-                                    <CustomAudioPlayer src={file.url} name={file.name} />
-                                )}
+                                {file.type === 'video' && <CustomVideoPlayer src={file.url} />}
+                                {file.type === 'audio' && <CustomAudioPlayer src={file.url} name={file.name} />}
                                 {file.type === 'other' && (
-                                    <a href={file.url} target="_blank" rel="noopener noreferrer" className="file-icon-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem', color: 'white', textDecoration: 'none' }}>
-                                        <i className="fas fa-file" style={{ fontSize: '4rem', marginBottom: '1rem' }}></i>
+                                    <a href={file.url} target="_blank" rel="noopener noreferrer" className="file-icon-card">
+                                        <i className="fas fa-file file-icon-large"></i>
                                         <div className="file-name">{file.name}</div>
                                     </a>
                                 )}
@@ -122,27 +105,12 @@ const FileModal: React.FC<ModalProps> = ({ isOpen, folderName, files, onClose, o
                                     <div
                                         className={`social-icon-card ${inspectingIndex === index ? 'inspecting' : ''}`}
                                         onClick={(e) => handleSocialClick(e, index, file.url)}
-                                        style={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            width: '100%',
-                                            height: '100%',
-                                            color: 'white',
-                                            cursor: 'pointer',
-                                            transition: 'transform 0.3s, filter 0.3s',
-                                            position: 'relative'
-                                        }}
                                     >
-                                        <i className={file.name} style={{ fontSize: '5rem', marginBottom: '1rem', filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.3))' }}></i>
-                                        <div className="file-name" style={{ fontSize: '1.2rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                        <i className={`${file.name} social-icon-large`}></i>
+                                        <div className="social-name">
                                             {file.name.replace('fab fa-', '').replace('fas fa-', '').replace('far fa-', '')}
                                         </div>
                                     </div>
-                                )}
-                                {(file.type === 'image') && (
-                                    <div className="file-name">{file.name}</div>
                                 )}
                             </div>
                         ))}
@@ -153,4 +121,4 @@ const FileModal: React.FC<ModalProps> = ({ isOpen, folderName, files, onClose, o
     );
 };
 
-export default FileModal;
+export default memo(FileModal);

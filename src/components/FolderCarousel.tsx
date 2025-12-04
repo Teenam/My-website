@@ -1,10 +1,7 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import Folder from './Folder';
-
-interface FolderData {
-    name: string;
-    files: any[];
-}
+import { useEventListener } from '../hooks/useEventListener';
+import type { FolderData } from '../types';
 
 interface FolderCarouselProps {
     folders: FolderData[];
@@ -18,137 +15,99 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
     const [startY, setStartY] = useState(0);
     const [startRotation, setStartRotation] = useState(0);
     const [velocity, setVelocity] = useState(0);
-    const requestRef = useRef<number | undefined>(undefined);
-    const lastTimeRef = useRef<number | undefined>(undefined);
-    const lastYRef = useRef<number>(0);
-    const lastTimeStampRef = useRef<number>(0);
-
     const [radius, setRadius] = useState(400);
 
+    const angleStep = 360 / folders.length;
+    const lastYRef = useRef(0);
+    const lastTimeRef = useRef(0);
+
+    // Responsive radius
     useEffect(() => {
         const handleResize = () => {
             setRadius(window.innerWidth < 768 ? 250 : 400);
         };
-        handleResize(); // Set initial
+        handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // const radius = 400; // Radius of the wheel
-    const angleStep = 360 / folders.length;
-
-    const lastVelocityRef = useRef<number>(0);
-    const velocityBufferRef = useRef<number[]>([]);
-    const VELOCITY_BUFFER_SIZE = 5;
-
-    // Inertia animation with improved smoothing
-    const animate = (time: number) => {
-        if (lastTimeRef.current !== undefined) {
+    // Inertia animation loop
+    useEffect(() => {
+        let rafId: number;
+        const animate = () => {
             if (!isDragging && Math.abs(velocity) > 0.05) {
                 setRotation(prev => prev + velocity);
-                setVelocity(prev => prev * 0.96); // Slightly increased friction for smoother feel
-            } else if (!isDragging && Math.abs(velocity) <= 0.05) {
-                // Stop animation when velocity is too low
+                setVelocity(prev => prev * 0.96);
+            } else if (!isDragging) {
                 setVelocity(0);
             }
-        }
-        lastTimeRef.current = time;
-        requestRef.current = requestAnimationFrame(animate);
-    };
-
-    useEffect(() => {
-        requestRef.current = requestAnimationFrame(animate);
-        return () => {
-            if (requestRef.current) cancelAnimationFrame(requestRef.current);
+            rafId = requestAnimationFrame(animate);
         };
+        rafId = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(rafId);
     }, [isDragging, velocity]);
 
-    // Handle wheel/trackpad scroll
-    const handleWheel = (e: WheelEvent) => {
+    // Wheel/trackpad scroll handler
+    const handleWheel = useCallback((e: WheelEvent) => {
         e.preventDefault();
-        // Desktop: Positive delta moves forward (down/right) - Reverted to original
         const delta = e.deltaY * 0.2;
         setRotation(prev => prev + delta);
         setVelocity(delta * 0.1);
-    };
-
-    useEffect(() => {
-        const container = containerRef.current;
-        if (container) {
-            container.addEventListener('wheel', handleWheel, { passive: false });
-            return () => {
-                container.removeEventListener('wheel', handleWheel);
-            };
-        }
     }, []);
 
-    const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
+    useEventListener('wheel', handleWheel, containerRef.current, { passive: false });
+
+    // Unified pointer start (mouse/touch)
+    const handlePointerStart = useCallback((y: number) => {
         setIsDragging(true);
-        const y = 'touches' in e ? e.touches[0].clientY : e.clientY;
         setStartY(y);
         setStartRotation(rotation);
         setVelocity(0);
         lastYRef.current = y;
-        lastTimeStampRef.current = Date.now();
-        lastVelocityRef.current = 0;
+        lastTimeRef.current = Date.now();
+    }, [rotation]);
+
+    const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
+        const y = 'touches' in e ? e.touches[0].clientY : e.clientY;
+        handlePointerStart(y);
     };
 
-    const handleMouseMove = (e: MouseEvent | TouchEvent) => {
+    // Unified pointer move
+    const handlePointerMove = useCallback((y: number) => {
         if (!isDragging) return;
-        const y = 'touches' in e ? e.touches[0].clientY : e.clientY;
+
         const deltaY = y - startY;
+        setRotation(startRotation - deltaY * 0.5);
 
-        // Mobile/Drag: Dragging UP (negative deltaY) -> Rotate Forward (positive rotation)
-        const deltaRotation = -deltaY * 0.5;
-        setRotation(startRotation + deltaRotation);
-
-        // Calculate instantaneous velocity
+        // Calculate velocity for momentum
         const now = Date.now();
-        const timeDiff = now - lastTimeStampRef.current;
-        const distDiff = y - lastYRef.current;
-
+        const timeDiff = now - lastTimeRef.current;
         if (timeDiff > 0) {
-            // Calculate velocity: distance / time
-            // Reversed direction for drag velocity too
-            const v = (-distDiff / timeDiff) * 15;
-
-            // Add to velocity buffer for averaging
-            velocityBufferRef.current.push(v);
-            if (velocityBufferRef.current.length > VELOCITY_BUFFER_SIZE) {
-                velocityBufferRef.current.shift();
-            }
-
-            // Average velocity over buffer for smoother result
-            const avgVelocity = velocityBufferRef.current.reduce((a, b) => a + b, 0) / velocityBufferRef.current.length;
-            lastVelocityRef.current = avgVelocity;
+            const dist = y - lastYRef.current;
+            const v = (-dist / timeDiff) * 15;
+            setVelocity(v * 0.8); // Apply directly with damping
         }
 
         lastYRef.current = y;
-        lastTimeStampRef.current = now;
-    };
+        lastTimeRef.current = now;
+    }, [isDragging, startY, startRotation]);
 
-    const handleMouseUp = () => {
-        if (!isDragging) return;
+    const handleMouseMove = useCallback((e: MouseEvent | TouchEvent) => {
+        const y = 'touches' in e ? e.touches[0].clientY : e.clientY;
+        handlePointerMove(y);
+    }, [handlePointerMove]);
+
+    const handleMouseUp = useCallback(() => {
         setIsDragging(false);
+    }, []);
 
-        // Apply the averaged velocity from movement buffer
-        setVelocity(lastVelocityRef.current * 0.8);
-
-        // Clear velocity buffer for next interaction
-        velocityBufferRef.current = [];
-    };
-
+    // Event listener management
     useEffect(() => {
         if (isDragging) {
             window.addEventListener('mousemove', handleMouseMove);
             window.addEventListener('mouseup', handleMouseUp);
             window.addEventListener('touchmove', handleMouseMove, { passive: false });
             window.addEventListener('touchend', handleMouseUp);
-        } else {
-            window.removeEventListener('mousemove', handleMouseMove);
-            window.removeEventListener('mouseup', handleMouseUp);
-            window.removeEventListener('touchmove', handleMouseMove);
-            window.removeEventListener('touchend', handleMouseUp);
         }
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
@@ -156,7 +115,7 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
             window.removeEventListener('touchmove', handleMouseMove);
             window.removeEventListener('touchend', handleMouseUp);
         };
-    }, [isDragging]);
+    }, [isDragging, handleMouseMove, handleMouseUp]);
 
     return (
         <div
@@ -168,25 +127,9 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
             <div className="carousel-wheel" style={{ transform: `rotateX(${rotation}deg)` }}>
                 {folders.map((folder, index) => {
                     const angle = index * angleStep;
-
-                    // Calculate depth-based effects using Cosine for robust "closest to viewer" logic
-                    // 0 degrees is front (closest), 180 is back (farthest)
-                    // Cosine(0) = 1, Cosine(180) = -1
                     const rad = (angle + rotation) * Math.PI / 180;
                     const cosVal = Math.cos(rad);
-
-                    // Map cosVal (-1 to 1) to opacity/brightness
-                    // We want front (1) to be fully visible, back (-1) to be dim
-                    // Normalize to 0-1 range where 1 is front
-                    const normalizedDepth = (cosVal + 1) / 2; // 0 (back) to 1 (front)
-
-                    // Removed depth-based fading as requested
-                    const opacity = 1;
-                    const brightness = 1;
-
-                    // Calculate z-index to ensure correct layering
-                    // Front items (higher normalizedDepth) get higher z-index
-                    // Multiplier increased to 1000 to prevent z-fighting
+                    const normalizedDepth = (cosVal + 1) / 2;
                     const zIndex = Math.round(normalizedDepth * 1000);
 
                     return (
@@ -195,10 +138,7 @@ const FolderCarousel: React.FC<FolderCarouselProps> = ({ folders, onFolderClick 
                             className="carousel-item"
                             style={{
                                 transform: `rotateX(${-angle}deg) translateZ(${radius}px) rotateX(${angle - rotation}deg)`,
-                                opacity: opacity,
-                                filter: `brightness(${brightness})`,
-                                zIndex: zIndex
-                                // Removed transition for opacity/filter
+                                zIndex
                             }}
                         >
                             <Folder

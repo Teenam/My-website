@@ -1,17 +1,6 @@
-import React from 'react';
+import React, { memo } from 'react';
 import Folder from './Folder';
-
-interface FileData {
-    name: string;
-    type: 'image' | 'video' | 'audio' | 'other' | 'social';
-    url: string;
-}
-
-
-interface FolderData {
-    name: string;
-    files: FileData[];
-}
+import type { FolderData } from '../types';
 
 interface FolderGridProps {
     folders: FolderData[];
@@ -33,4 +22,4 @@ const FolderGrid: React.FC<FolderGridProps> = ({ folders, onFolderClick }) => {
     );
 };
 
-export default FolderGrid;
+export default memo(FolderGrid);

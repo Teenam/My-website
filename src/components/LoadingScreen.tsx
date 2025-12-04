@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 interface LoadingScreenProps {
     isLoading: boolean;
@@ -15,4 +15,4 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ isLoading }) => {
     );
 };
 
-export default LoadingScreen;
+export default memo(LoadingScreen);
